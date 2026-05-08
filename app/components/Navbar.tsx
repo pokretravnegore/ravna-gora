@@ -3,7 +3,7 @@ import { LogoBlack } from "./Logo";
 
 const NAV_LINKS = [
   { label: "About Us", href: "/about" },
-  { label: "Events", href: "#" },
+  { label: "Events", href: "/events" },
   { label: "Newspaper Catalog", href: "/newspaper-catalog" },
   { label: "Membership", href: "#" },
 ];
