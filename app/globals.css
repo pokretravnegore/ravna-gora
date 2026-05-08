@@ -1,26 +1,256 @@
 @import "tailwindcss";
 
+/* =============================================================
+   DESIGN TOKENS — CSS Custom Properties
+   Breakpoints: Phone (default) → Tablet 768px → Desktop 1280px
+   ============================================================= */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* ── Typography sizes — Phone ── */
+  --text-display: 40px;     --leading-display: 44px;
+  --text-h1: 28px;          --leading-h1: 32px;
+  --text-h2: 24px;          --leading-h2: 28px;
+  --text-h3: 22px;          --leading-h3: 26px;
+  --text-h4: 20px;          --leading-h4: 24px;
+  --text-large: 20px;       --leading-large: 26px;
+  --text-body: 17px;        --leading-body: 24px;
+  --text-ui-medium: 16px;   --leading-ui-medium: 22px;
+  --text-base: 16px;        --leading-base: 22px;
+  --text-sm: 15px;          --leading-sm: 21px;
+  --text-caption: 13px;     --leading-caption: 18px;
+  --text-label: 13px;       --leading-label: 17px;
+  --text-micro: 12px;       --leading-micro: 16px;
+
+  /* ── Spacing — Phone ── */
+  --space-list-h: 8px;
+  --space-card-v: 40px;
+  --space-title-sub: 12px;
+  --space-text-tp: 24px;
+  --space-text-p: 16px;
+  --space-big: 32px;
+  --space-1: 2px;
+  --space-2: 13px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 28px;
+  --space-6: 36px;
+  --space-7: 40px;
+  --space-8: 44px;
+  --space-9: 56px;
+  --space-10: 64px;
+  --btn-v: 8px;
+  --btn-h: 10px;
+  --btn-big-v: 8px;
+  --btn-big-h: 16px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@media (min-width: 768px) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* ── Typography sizes — Tablet ── */
+    --text-display: 52px;     --leading-display: 58px;
+    --text-h1: 32px;          --leading-h1: 38px;
+    --text-h2: 26.5px;        --leading-h2: 32px;
+    --text-h3: 28px;          --leading-h3: 34px;
+    --text-h4: 26px;          --leading-h4: 32px;
+    --text-large: 22px;       --leading-large: 30px;
+    --text-body: 18px;        --leading-body: 28px;
+    --text-ui-medium: 17px;   --leading-ui-medium: 24px;
+    --text-base: 16px;        --leading-base: 24px;
+    --text-sm: 15.33px;       --leading-sm: 23px;
+    --text-caption: 13.47px;  --leading-caption: 20.2px;
+    --text-label: 13.25px;    --leading-label: 18.5px;
+    --text-micro: 12px;       --leading-micro: 19.2px;
+
+    /* ── Spacing — Tablet ── */
+    --space-list-h: 10px;
+    --space-card-v: 56px;
+    --space-title-sub: 16px;
+    --space-text-tp: 32px;
+    --space-text-p: 18px;
+    --space-big: 48px;
+    --space-3: 20px;
+    --space-4: 32px;
+    --space-5: 36px;
+    --space-6: 48px;
+    --space-7: 52px;
+    --space-8: 56px;
+    --space-9: 72px;
+    --space-10: 88px;
+    --btn-v: 18px;
+    --btn-h: 20px;
+    --btn-big-v: 18px;
+    --btn-big-h: 40px;
   }
 }
 
+@media (min-width: 1280px) {
+  :root {
+    /* ── Typography sizes — Desktop ── */
+    --text-display: 64px;     --leading-display: 57px;
+    --text-h1: 37.51px;       --leading-h1: 45px;
+    --text-h2: 30.58px;       --leading-h2: 38.2px;
+    --text-h3: 32px;          --leading-h3: 40px;
+    --text-h4: 32px;          --leading-h4: 40px;
+    --text-large: 24px;       --leading-large: 36px;
+    --text-body: 20px;        --leading-body: 30.9px;
+    --text-ui-medium: 18px;   --leading-ui-medium: 18px;
+    --text-base: 16px;        --leading-base: 24px;
+    --text-sm: 15.33px;       --leading-sm: 23px;
+    --text-caption: 13.47px;  --leading-caption: 20.2px;
+    --text-label: 13.25px;    --leading-label: 18.5px;
+    --text-micro: 12px;       --leading-micro: 19.2px;
+
+    /* ── Spacing — Desktop ── */
+    --space-list-h: 10px;
+    --space-card-v: 80px;
+    --space-title-sub: 20px;
+    --space-text-tp: 40px;
+    --space-text-p: 20px;
+    --space-big: 64px;
+    --space-1: 2px;
+    --space-2: 13px;
+    --space-3: 20px;
+    --space-4: 38px;
+    --space-5: 42px;
+    --space-6: 59px;
+    --space-7: 64px;
+    --space-8: 70px;
+    --space-9: 98px;
+    --space-10: 120px;
+    --btn-v: 18px;
+    --btn-h: 20px;
+    --btn-big-v: 18px;
+    --btn-big-h: 45px;
+  }
+}
+
+/* =============================================================
+   TAILWIND THEME
+   ============================================================= */
+
+/* Static design tokens → inlined into utility classes */
+@theme {
+  /* Colors */
+  --color-black: #000000;
+  --color-white: #ffffff;
+  --color-gray-1: #2c2c2c;
+  --color-gray-2: #787878;
+  --color-gray-3: #d9d9d9;
+  --color-blue-1: #000a1e;
+  --color-blue-2: #153c8c;
+  --color-offwhite-1: #faf4eb;
+  --color-offwhite-2: #ffebce;
+}
+
+/* Dynamic tokens referencing Next.js font CSS vars */
+@theme inline {
+  --font-display: var(--font-cormorant);
+  --font-body: var(--font-inter);
+}
+
+/* =============================================================
+   COMPOSITE TEXT-STYLE UTILITIES
+   Usage: <h1 className="type-display"> etc.
+   ============================================================= */
+
+@utility type-display {
+  font-family: var(--font-cormorant), serif;
+  font-size: var(--text-display);
+  line-height: var(--leading-display);
+  font-weight: 600;
+}
+
+@utility type-h1 {
+  font-family: var(--font-cormorant), serif;
+  font-size: var(--text-h1);
+  line-height: var(--leading-h1);
+  font-weight: 500;
+}
+
+@utility type-h2 {
+  font-family: var(--font-cormorant), serif;
+  font-size: var(--text-h2);
+  line-height: var(--leading-h2);
+  font-weight: 500;
+}
+
+@utility type-h3 {
+  font-family: var(--font-cormorant), serif;
+  font-size: var(--text-h3);
+  line-height: var(--leading-h3);
+  font-weight: 600;
+}
+
+@utility type-h4 {
+  font-family: var(--font-cormorant), serif;
+  font-size: var(--text-h4);
+  line-height: var(--leading-h4);
+  font-weight: 600;
+}
+
+@utility type-large {
+  font-family: var(--font-inter), sans-serif;
+  font-size: var(--text-large);
+  line-height: var(--leading-large);
+  font-weight: 400;
+}
+
+@utility type-body {
+  font-family: var(--font-inter), sans-serif;
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  font-weight: 400;
+}
+
+@utility type-ui-medium {
+  font-family: var(--font-inter), sans-serif;
+  font-size: var(--text-ui-medium);
+  line-height: var(--leading-ui-medium);
+  font-weight: 500;
+}
+
+@utility type-base {
+  font-family: var(--font-inter), sans-serif;
+  font-size: var(--text-base);
+  line-height: var(--leading-base);
+  font-weight: 400;
+}
+
+@utility type-small-medium {
+  font-family: var(--font-inter), sans-serif;
+  font-size: var(--text-sm);
+  line-height: var(--leading-sm);
+  font-weight: 500;
+}
+
+@utility type-caption {
+  font-family: var(--font-inter), sans-serif;
+  font-size: var(--text-caption);
+  line-height: var(--leading-caption);
+  font-weight: 400;
+}
+
+@utility type-label {
+  font-family: var(--font-inter), sans-serif;
+  font-size: var(--text-label);
+  line-height: var(--leading-label);
+  font-weight: 700;
+}
+
+@utility type-micro {
+  font-family: var(--font-inter), sans-serif;
+  font-size: var(--text-micro);
+  line-height: var(--leading-micro);
+  font-weight: 400;
+  letter-spacing: 0.12em;
+}
+
+/* =============================================================
+   BASE
+   ============================================================= */
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), sans-serif;
+  background-color: #ffffff;
+  color: #000000;
 }
