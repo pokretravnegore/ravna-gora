@@ -5,7 +5,7 @@ import { ICONS } from "./assets";
 const EXPLORE_LINKS = [
   { label: "About Us", href: "/about" },
   { label: "Events", href: "#" },
-  { label: "Newspaper Catalog", href: "#" },
+  { label: "Newspaper Catalog", href: "/newspaper-catalog" },
   { label: "Home", href: "/" },
 ];
 
