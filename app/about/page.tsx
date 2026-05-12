@@ -1,6 +1,6 @@
-import { Navbar } from "../components/Navbar";
-import { Footer } from "../components/Footer";
-import { SectionHeading } from "../components/SectionHeading";
+import { Navbar } from "../components/layout/Navbar";
+import { Footer } from "../components/layout/Footer";
+import { SectionHeading } from "../components/ui/SectionHeading";
 import { ICONS } from "../components/assets";
 
 // Figma MCP asset URLs — expires 7 days after generation

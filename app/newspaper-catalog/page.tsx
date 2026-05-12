@@ -1,6 +1,7 @@
-import { Navbar } from "../components/Navbar";
-import { Footer } from "../components/Footer";
+import { Navbar } from "../components/layout/Navbar";
+import { Footer } from "../components/layout/Footer";
 import { ICONS } from "../components/assets";
+import { CatalogHeader } from "../components/ui/CatalogHeader";
 
 // Figma MCP asset URLs — expires 7 days after generation
 const A = {
@@ -52,53 +53,38 @@ export default function NewspaperCatalog() {
       <main className="flex-1">
         <div className="max-w-[1512px] mx-auto px-4 md:px-6 xl:px-10 pt-[var(--space-8)] flex flex-col gap-[var(--space-8)]">
 
-          {/* Hero image */}
-          <div className="relative w-full h-[300px] md:h-[507px] overflow-hidden">
-            <img
-              alt="Historical photograph"
-              src={A.hero}
-              className="absolute inset-0 size-full object-cover"
-            />
-          </div>
-
-          {/* Header + catalog */}
-          <div className="flex flex-col gap-[var(--space-9)] pb-[var(--space-8)]">
-
-            {/* Header banner */}
-            <div className="flex flex-col gap-[var(--space-4)]">
-              <div className="flex flex-col gap-[var(--space-2)]">
-                <h1 className="type-display text-black">Newspaper Archive</h1>
-                <p className="type-base text-black">Browse all issues since 1965</p>
-              </div>
-
-              {/* Decade filter bar — horizontally scrollable */}
-              <div className="flex items-center gap-[var(--space-list-h)] overflow-x-auto pb-1">
-                <button className="bg-black text-white type-large whitespace-nowrap shrink-0 px-[var(--btn-big-h)] py-[var(--btn-big-v)]">
-                  All
+          <CatalogHeader
+            imageSrc={A.hero}
+            imageAlt="Historical photograph"
+            title="Newspaper Archive"
+            description="Browse all issues since 1965"
+          >
+            {/* Decade filter bar — horizontally scrollable */}
+            <div className="flex items-center gap-[var(--space-list-h)] overflow-x-auto pb-1">
+              <button className="bg-black text-white type-large whitespace-nowrap shrink-0 px-[var(--btn-big-h)] py-[var(--btn-big-v)]">
+                All
+              </button>
+              {DECADES.map((decade) => (
+                <button
+                  key={decade}
+                  className="border border-black text-black type-large whitespace-nowrap shrink-0 px-[var(--btn-h)] py-[var(--btn-v)]"
+                >
+                  {decade}
                 </button>
-                {DECADES.map((decade) => (
-                  <button
-                    key={decade}
-                    className="border border-black text-black type-large whitespace-nowrap shrink-0 px-[var(--btn-h)] py-[var(--btn-v)]"
-                  >
-                    {decade}
-                  </button>
-                ))}
-              </div>
+              ))}
+            </div>
+          </CatalogHeader>
+
+          <div className="flex flex-col gap-[var(--space-9)] pb-[var(--space-8)]">
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-x-[20px] gap-y-[var(--space-card-v)] w-full">
+              {ISSUES.map((issue) => (
+                <IssueCard key={issue.number} {...issue} />
+              ))}
             </div>
 
-            {/* Issue grid + Load More */}
-            <div className="flex flex-col items-center gap-[var(--space-9)]">
-              <div className="grid grid-cols-1 xl:grid-cols-3 gap-x-[20px] gap-y-[var(--space-card-v)] w-full">
-                {ISSUES.map((issue) => (
-                  <IssueCard key={issue.number} {...issue} />
-                ))}
-              </div>
-
-              <p className="type-h4 text-black text-center">Load More →</p>
-            </div>
-
+            <p className="type-h4 text-black text-center">Load More →</p>
           </div>
+
         </div>
       </main>
 
