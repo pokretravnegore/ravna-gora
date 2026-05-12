@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { LogoWhite } from "./Logo";
-import { ICONS } from "./assets";
+import { ICONS } from "../assets";
 
 const EXPLORE_LINKS = [
   { label: "About Us", href: "/about" },
