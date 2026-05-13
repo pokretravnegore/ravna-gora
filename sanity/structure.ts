@@ -13,9 +13,17 @@ export const structure: StructureResolver = (S) =>
             .schemaType("homePage")
             .documentId("homePage")
         ),
+      S.listItem()
+        .title("Current Newspaper")
+        .id("currentNewspaper")
+        .child(
+          S.document()
+            .schemaType("currentNewspaper")
+            .documentId("currentNewspaper")
+        ),
       S.divider(),
       // All other document types (events, historyPages, …)
       ...S.documentTypeListItems().filter(
-        (item) => item.getId() !== "homePage"
+        (item) => !["homePage", "currentNewspaper"].includes(item.getId() ?? "")
       ),
     ]);
