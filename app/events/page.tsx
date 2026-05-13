@@ -1,7 +1,7 @@
 import { Navbar } from "../components/layout/Navbar";
 import { Footer } from "../components/layout/Footer";
 import { CatalogHeader } from "../components/ui/CatalogHeader";
-import { EventCard } from "../components/ui/EventCard";
+import { CatalogCard } from "../components/ui/CatalogCard";
 import { client } from "../../sanity/lib/client";
 
 export const revalidate = 60;
@@ -50,7 +50,13 @@ export default async function Events() {
             ) : (
               <div className="grid grid-cols-1 xl:grid-cols-3 gap-x-[20px] gap-y-[var(--space-card-v)] w-full">
                 {events.map((event) => (
-                  <EventCard key={event._id} slug={event.slug} card={event.card} />
+                  <CatalogCard
+                    key={event._id}
+                    href={`/events/${event.slug}`}
+                    title={event.card.title}
+                    subtitle={event.card.subtitle}
+                    pictureUrl={event.card.pictureUrl}
+                  />
                 ))}
               </div>
             )}

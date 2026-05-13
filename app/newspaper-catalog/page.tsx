@@ -1,11 +1,10 @@
 import { Navbar } from "../components/layout/Navbar";
 import { Footer } from "../components/layout/Footer";
-import { ICONS } from "../components/assets";
 import { CatalogHeader } from "../components/ui/CatalogHeader";
+import { CatalogCard }   from "../components/ui/CatalogCard";
 
 // Figma MCP asset URLs — expires 7 days after generation
 const A = {
-  arrowLg:    ICONS.arrowLg,
   hero:       "https://www.figma.com/api/mcp/asset/2680efc6-31d7-4801-875d-84373d1f8081",
   issueCover: "https://www.figma.com/api/mcp/asset/a808d36b-dc83-418d-b3dc-6df3bd249bb3",
 };
@@ -22,28 +21,6 @@ const ISSUES: Issue[] = [
   { number: "#763", date: "FEBRUARY 2026", coverImage: A.issueCover },
   { number: "#764", date: "MARCH 2026",    coverImage: A.issueCover },
 ];
-
-function IssueCard({ number, date, coverImage }: Issue) {
-  return (
-    <article className="flex flex-col gap-[10px]">
-      <div className="relative w-full h-[300px] md:h-[516px] overflow-hidden">
-        <img
-          alt={`Issue ${number} — ${date}`}
-          src={coverImage}
-          className="absolute inset-0 size-full object-cover"
-        />
-      </div>
-
-      <div className="flex items-center justify-between">
-        <div className="flex flex-col gap-[4px] flex-1 min-w-0">
-          <p className="type-large text-blue-2">{number}</p>
-          <p className="type-h3 text-black">{date}</p>
-        </div>
-        <img alt="Open issue" src={A.arrowLg} className="size-[45px] shrink-0 ml-2" />
-      </div>
-    </article>
-  );
-}
 
 export default function NewspaperCatalog() {
   return (
@@ -78,7 +55,12 @@ export default function NewspaperCatalog() {
           <div className="flex flex-col gap-[var(--space-9)] pb-[var(--space-8)]">
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-x-[20px] gap-y-[var(--space-card-v)] w-full">
               {ISSUES.map((issue) => (
-                <IssueCard key={issue.number} {...issue} />
+                <CatalogCard
+                  key={issue.number}
+                  subtitle={issue.number}
+                  title={issue.date}
+                  pictureUrl={issue.coverImage}
+                />
               ))}
             </div>
 
