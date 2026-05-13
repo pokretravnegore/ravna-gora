@@ -10,11 +10,12 @@ const EXPLORE_LINKS = [
 ];
 
 const HISTORY_LINKS = [
-  { label: "Movement in Serbia", href: "#" },
-  { label: "Testimonies", href: "#" },
-  { label: "Movement Outside of Serbia", href: "#" },
-  { label: "Symbols & Traditions", href: "#" },
-  { label: "Celebrations", href: "#" },
+  // FIXME: slug for Part 1 ("General Mihailovic and the Ravna Gora Movement") was not confirmed — verify and update
+  { label: "Movement in Serbia", href: "/history/serbian-national-movement-outside-of-serbia" },
+  { label: "Testimonies", href: "/history/foreign-testimonies-about-chetniks-and-general-mihalovic" },
+  { label: "Movement Outside of Serbia", href: "/history/serbian-national-movement-outside-of-serbia" },
+  { label: "Symbols & Traditions", href: "/history/symbols-and-traditions" },
+  { label: "Celebrations", href: "/history/celebrations-and-commemorations" },
 ];
 
 export function Footer() {
