@@ -86,6 +86,11 @@ export function Navbar() {
   const [lang, setLang] = useState<Lang>("english");
 
   useEffect(() => {
+    document.body.style.overflow = menuOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [menuOpen]);
+
+  useEffect(() => {
     setLang(readLangCookie());
   }, []);
 
@@ -264,6 +269,18 @@ export function Navbar() {
               >
                 Login
               </Link>
+
+              <div className="h-px bg-black/15 w-full" />
+
+              {/* Language switcher */}
+              <button
+                onClick={cycleLang}
+                className="flex items-center gap-2 type-h4 text-gray-1"
+                aria-label="Switch language"
+              >
+                <GlobeIcon />
+                <span>{LANG_DISPLAY[lang]}</span>
+              </button>
             </div>
           </div>
         </div>
