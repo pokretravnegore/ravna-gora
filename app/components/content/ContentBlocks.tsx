@@ -31,9 +31,9 @@ export function ContentBlocks({ blocks }: { blocks: ContentBlock[] }) {
           case "sectionTitle":
             return <SectionHeading key={block._key} title={block.text} />;
           case "paragraph":
-            return <ParagraphView key={block._key} block={block} />;
+            return <ParagraphView key={block._key} text={block.text} />;
           case "quote":
-            return <QuoteView key={block._key} block={block} />;
+            return <QuoteView key={block._key} text={block.text} subtext={block.subtext} />;
           case "pictureBig":
             return <PictureBigView key={block._key} block={block} />;
           case "pictureTwoPictures":
