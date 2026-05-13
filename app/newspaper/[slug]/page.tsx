@@ -43,8 +43,9 @@ export default function NewspaperViewer() {
       canvas.style.width = `${Math.floor(viewport.width)}px`;
       canvas.style.height = `${Math.floor(viewport.height)}px`;
 
+      const ctx = canvas.getContext("2d")!;
       await page.render({
-        canvas,
+        canvasContext: ctx,
         viewport,
         transform: dpr !== 1 ? [dpr, 0, 0, dpr, 0, 0] : undefined,
       }).promise;
@@ -65,7 +66,8 @@ export default function NewspaperViewer() {
 
     try {
       const pdfjsLib = await import("pdfjs-dist");
-      pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
+      // CDN worker avoids MIME-type issues with the local .mjs file in Next.js dev
+      pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
       const pdf = await pdfjsLib
         .getDocument(`/api/newspaper/${slug}`)
