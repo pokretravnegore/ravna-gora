@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
-import { Navbar } from "../../components/layout/Navbar";
-import { Footer } from "../../components/layout/Footer";
+import { ContentPageLayout } from "../../components/layout/ContentPageLayout";
 import { HeroImage } from "../../components/ui/HeroImage";
 import { PageTitle } from "../../components/ui/PageTitle";
 import { ContentBlocks, type ContentBlock } from "../../components/content/ContentBlocks";
@@ -45,26 +44,13 @@ export default async function EventPage({
   if (!event) notFound();
 
   return (
-    <div className="min-h-screen bg-offwhite-1 flex flex-col">
-      <Navbar />
-
-      <main className="flex-1">
-        <div className="max-w-[1512px] mx-auto px-4 md:px-6 xl:px-10 pt-[var(--space-8)] flex flex-col gap-[var(--space-8)] pb-[var(--space-10)]">
-
-          <HeroImage src={event.pictureUrl} alt={event.title} />
-
-          <PageTitle title={event.title} subtitle={event.subtitle} />
-
-          {event.content && event.content.length > 0 && (
-            <div className="max-w-[900px]">
-              <ContentBlocks blocks={event.content} />
-            </div>
-          )}
-
-        </div>
-      </main>
-
-      <Footer />
-    </div>
+    <ContentPageLayout hero={<HeroImage src={event.pictureUrl} alt={event.title} />}>
+      <div className="flex flex-col gap-[var(--space-8)] py-[var(--space-8)] pb-[var(--space-10)]">
+        <PageTitle title={event.title} subtitle={event.subtitle} />
+        {event.content && event.content.length > 0 && (
+          <ContentBlocks blocks={event.content} />
+        )}
+      </div>
+    </ContentPageLayout>
   );
 }
