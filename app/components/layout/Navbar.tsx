@@ -1,8 +1,53 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { LogoBlack } from "./Logo";
+
+type Lang = "english" | "serbian_cyrilics" | "serbian_latin";
+
+const LANG_DISPLAY: Record<Lang, string> = {
+  english: "EN",
+  serbian_cyrilics: "SB (cr)",
+  serbian_latin: "SB (lt)",
+};
+
+const LANG_NEXT: Record<Lang, Lang> = {
+  english: "serbian_cyrilics",
+  serbian_cyrilics: "serbian_latin",
+  serbian_latin: "english",
+};
+
+function readLangCookie(): Lang {
+  const match = document.cookie.match(/(?:^|; )lang=([^;]*)/);
+  const val = match?.[1];
+  if (val === "serbian_cyrilics" || val === "serbian_latin") return val;
+  return "english";
+}
+
+function writeLangCookie(lang: Lang) {
+  document.cookie = `lang=${lang};path=/;max-age=${60 * 60 * 24 * 365};SameSite=Lax`;
+}
+
+function GlobeIcon() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <circle cx="12" cy="12" r="10" />
+      <line x1="2" y1="12" x2="22" y2="12" />
+      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+    </svg>
+  );
+}
 
 const NAV_LINKS = [
   { label: "About Us", href: "/about" },
@@ -38,6 +83,17 @@ const HISTORY_LINKS = [
 
 export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [lang, setLang] = useState<Lang>("english");
+
+  useEffect(() => {
+    setLang(readLangCookie());
+  }, []);
+
+  function cycleLang() {
+    const next = LANG_NEXT[lang];
+    writeLangCookie(next);
+    setLang(next);
+  }
 
   return (
     <>
@@ -48,7 +104,7 @@ export function Navbar() {
           </Link>
 
           <div className="flex items-center">
-            {/* Desktop: nav links + Login in one row with vertical dividers */}
+            {/* Desktop: nav links + Login + language switcher in one row with vertical dividers */}
             <div className="hidden xl:flex items-center">
               {[...NAV_LINKS, { label: "Login", href: "#" }].map(({ label, href }, i) => (
                 <div key={label} className="flex items-center">
@@ -58,6 +114,15 @@ export function Navbar() {
                   </Link>
                 </div>
               ))}
+              <div className="w-px h-[18px] bg-black mx-[var(--space-3)]" />
+              <button
+                onClick={cycleLang}
+                className="w-22 flex items-center gap-1.5 type-ui-medium font-bold text-black"
+                aria-label="Switch language"
+              >
+                <GlobeIcon />
+                <span>{LANG_DISPLAY[lang]}</span>
+              </button>
             </div>
 
             {/* Phone / tablet: hamburger */}
