@@ -1,13 +1,17 @@
-import { Navbar } from "./components/Navbar";
-import { Footer } from "./components/Footer";
-import { SectionHeading } from "./components/SectionHeading";
+import Link from "next/link";
+import { Navbar } from "./components/layout/Navbar";
+import { Footer } from "./components/layout/Footer";
+import { SectionHeading } from "./components/ui/SectionHeading";
 import { ICONS } from "./components/assets";
+import { client } from "../sanity/lib/client";
+
+export const revalidate = 60;
 
 // Figma MCP asset URLs — expires 7 days after generation
+// FIXME: images and excerpts in histArticles are static placeholders — replace with CMS data when history pages are authored
 const A = {
   arrowLg: ICONS.arrowLg,
   arrowSm: ICONS.arrowSm,
-  // Photos
   hero:     "https://www.figma.com/api/mcp/asset/f8726c09-f189-4d8c-89d3-ea3631839b0d",
   magazine: "https://www.figma.com/api/mcp/asset/bbdd735f-5579-40d2-b45d-348bef1c4ede",
   about:    "https://www.figma.com/api/mcp/asset/bea1d0ed-cac3-47c3-91b7-b6ae259519a1",
@@ -18,11 +22,23 @@ const A = {
   hist5:    "https://www.figma.com/api/mcp/asset/3f3aa435-ab67-45db-93f0-2751c8cc5ff1",
 };
 
+type Chapter = { name: string; websiteUrl?: string };
+type LatestIssue = { coverUrl: string; date: string; number: string };
+type HomePageData = {
+  pageTitle: string;
+  pageSubtitle: string;
+  heroImageUrl: string;
+  latestIssue: LatestIssue | null;
+  chapters: Chapter[];
+};
+
+// FIXME: slug for Part 1 was not confirmed (duplicate given); verify and update once known
 const histArticles = [
   {
     part: "Part 1",
     title: "General Mihailovic and the Ravna Gora Movement",
     img: A.hist1,
+    href: "/history/serbian-national-movement-outside-of-serbia",
     excerpt:
       "In seeking to most clearly illustrate the history of the Chetnik movement, no source is perhaps as useful and as historically indicative as are the wartime records of General Mihailovic (1893–1946). Though the future will present many more opportunities to examine these records…",
   },
@@ -30,6 +46,7 @@ const histArticles = [
     part: "Part 2",
     title: "Foreign Testimonies About Chetniks and General Mihalovic",
     img: A.hist2,
+    href: "/history/foreign-testimonies-about-chetniks-and-general-mihalovic",
     excerpt:
       "General Mihailovic was a tragic hero of the Serbian people in the Second World War. Serbian people consider him a hero, but there are those who say he is a traitor. The biggest honors for one person cannot come from within his own people, but from the independent foreign observers.",
   },
@@ -37,6 +54,7 @@ const histArticles = [
     part: "Part 3",
     title: "Serbian national movement outside of Serbia",
     img: A.hist3,
+    href: "/history/serbian-national-movement-outside-of-serbia",
     excerpt:
       "Sources used in this text are from the war archives of Dinara Chetnik Division. The first call to arms in occupied Europe issued by the future leader of the Third Serbian Uprising, General Dragoljub Draža Mihailović.",
   },
@@ -44,6 +62,7 @@ const histArticles = [
     part: "Part 4",
     title: "Symbols and traditions",
     img: A.hist4,
+    href: "/history/symbols-and-traditions",
     excerpt:
       "In keeping with its commitment to the study and preservation of Serbian history and cultural heritage, the Movement honors a set of established symbols and traditions that reflect its historical identity.",
   },
@@ -51,19 +70,42 @@ const histArticles = [
     part: "Part 5",
     title: "Celebrations and commemorations",
     img: A.hist5,
+    href: "/history/celebrations-and-commemorations",
     excerpt:
       "Commemorations form an important part of the Movement's cultural and community life, reflecting its dedication to historical memory and Serbian tradition. Alongside the observance of the Slava Đurđevdan, members mark dates of lasting significance.",
   },
 ];
 
-const chapters = [
-  { name: "United States", hasLink: false },
-  { name: "Canada", hasLink: true },
-  { name: "United Kingdom", hasLink: true },
-  { name: "Australia", hasLink: true },
+const FALLBACK_CHAPTERS: Chapter[] = [
+  { name: "United States" },
+  { name: "Canada" },
+  { name: "United Kingdom" },
+  { name: "Australia" },
 ];
 
-export default function Home() {
+const FALLBACK_LATEST_ISSUE: LatestIssue = {
+  coverUrl: A.magazine,
+  date: "March 2026",
+  number: "#764",
+};
+
+export default async function Home() {
+  const homePage: HomePageData | null = await client.fetch(
+    `*[_type == "homePage" && _id == "homePage"][0] {
+      pageTitle,
+      pageSubtitle,
+      heroImageUrl,
+      latestIssue,
+      chapters
+    }`
+  );
+
+  const pageTitle    = homePage?.pageTitle    ?? "Movement of Serbian Chetniks Ravne Gore";
+  const pageSubtitle = homePage?.pageSubtitle ?? "Guardians of the Ravna Gora ideals—past, present, and future.";
+  const heroImageUrl = homePage?.heroImageUrl ?? A.hero;
+  const latestIssue  = homePage?.latestIssue  ?? FALLBACK_LATEST_ISSUE;
+  const chapters     = homePage?.chapters?.length ? homePage.chapters : FALLBACK_CHAPTERS;
+
   return (
     <div className="min-h-screen bg-offwhite-1 flex flex-col">
 
@@ -75,18 +117,14 @@ export default function Home() {
           {/* ── Hero ── */}
           <section className="flex flex-col gap-[var(--space-9)]">
             <div className="flex flex-col gap-[var(--space-title-sub)] items-center text-center text-black">
-              <h1 className="type-display">
-                Movement of Serbian Chetniks Ravne Gore
-              </h1>
-              <p className="type-h2">
-                Guardians of the Ravna Gora ideals—past, present, and future.
-              </p>
+              <h1 className="type-display">{pageTitle}</h1>
+              <p className="type-h2">{pageSubtitle}</p>
             </div>
 
             <div className="w-full h-[220px] md:h-[360px] xl:h-[507px] overflow-hidden relative">
               <img
                 alt="Historical photograph of the Serbian Chetnik Movement"
-                src={A.hero}
+                src={heroImageUrl}
                 className="absolute left-0 w-full max-w-none"
                 style={{ height: "204.22%", top: "-21.82%" }}
               />
@@ -114,7 +152,7 @@ export default function Home() {
                 <div className="relative h-[300px] md:h-[360px] xl:h-[420px] overflow-hidden">
                   <img
                     alt="Latest issue of Srbija newspaper"
-                    src={A.magazine}
+                    src={latestIssue.coverUrl}
                     className="absolute inset-0 size-full object-cover"
                   />
                   <div className="absolute inset-0 bg-black/40" />
@@ -123,8 +161,8 @@ export default function Home() {
                 <div className="flex flex-col gap-[var(--space-3)]">
                   <div className="flex items-center justify-between">
                     <div className="flex flex-col gap-[4px] flex-1 min-w-0">
-                      <p className="type-large text-black">March 2026</p>
-                      <h3 className="type-h3 text-black">Latest Issue (#764)</h3>
+                      <p className="type-large text-black">{latestIssue.date}</p>
+                      <h3 className="type-h3 text-black">Latest Issue ({latestIssue.number})</h3>
                     </div>
                     <img alt="Open issue" src={A.arrowLg} className="size-[45px] shrink-0 ml-2" />
                   </div>
@@ -184,32 +222,34 @@ export default function Home() {
               <SectionHeading title="Historical Introduction" />
 
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-[18px] gap-y-[var(--space-card-v)]">
-                {histArticles.map(({ part, title, img, excerpt }) => (
-                  <article key={part} className="flex flex-col gap-[var(--space-text-p)]">
-                    <div className="relative h-[260px] md:h-[320px] xl:h-[421px] overflow-hidden">
-                      <img
-                        alt={title}
-                        src={img}
-                        className="absolute inset-0 size-full object-cover"
-                      />
-                    </div>
-
-                    <div className="flex flex-col gap-[var(--space-text-p)]">
-                      <div className="flex items-start justify-between">
-                        <div className="flex flex-col gap-[4px] flex-1 min-w-0">
-                          <p className="type-large text-black">{part}</p>
-                          <h3 className="type-h3 text-black">{title}</h3>
-                        </div>
+                {histArticles.map(({ part, title, img, href, excerpt }) => (
+                  <Link key={part} href={href}>
+                    <article className="flex flex-col gap-[var(--space-text-p)]">
+                      <div className="relative h-[260px] md:h-[320px] xl:h-[421px] overflow-hidden">
                         <img
-                          alt="Open article"
-                          src={A.arrowLg}
-                          className="size-[45px] shrink-0 ml-2 mt-1"
+                          alt={title}
+                          src={img}
+                          className="absolute inset-0 size-full object-cover"
                         />
                       </div>
 
-                      <p className="type-body text-black line-clamp-3">{excerpt}</p>
-                    </div>
-                  </article>
+                      <div className="flex flex-col gap-[var(--space-text-p)]">
+                        <div className="flex items-start justify-between">
+                          <div className="flex flex-col gap-[4px] flex-1 min-w-0">
+                            <p className="type-large text-black">{part}</p>
+                            <h3 className="type-h3 text-black">{title}</h3>
+                          </div>
+                          <img
+                            alt="Open article"
+                            src={A.arrowLg}
+                            className="size-[45px] shrink-0 ml-2 mt-1"
+                          />
+                        </div>
+
+                        <p className="type-body text-black line-clamp-3">{excerpt}</p>
+                      </div>
+                    </article>
+                  </Link>
                 ))}
               </div>
             </section>
@@ -220,13 +260,13 @@ export default function Home() {
 
               <div className="flex justify-center">
                 <div className="w-full max-w-[949px] flex flex-col gap-[var(--space-4)]">
-                  {chapters.map(({ name, hasLink }) => (
+                  {chapters.map(({ name, websiteUrl }) => (
                     <div key={name} className="flex flex-col gap-[var(--space-4)]">
                       <div className="h-px bg-black/20 w-full" />
                       <div className="flex items-center justify-between">
                         <p className="type-h2 text-black">{name}</p>
-                        {hasLink && (
-                          <a href="#" className="flex items-center gap-[var(--space-2)]">
+                        {websiteUrl && (
+                          <a href={websiteUrl} className="flex items-center gap-[var(--space-2)]">
                             <p className="type-body text-black">Visit</p>
                             <img alt="Visit" src={A.arrowSm} className="size-[23px]" />
                           </a>

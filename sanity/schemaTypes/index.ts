@@ -1,3 +1,5 @@
 import { eventType } from "./eventType";
+import { historyPageType } from "./historyPageType";
+import { homePageType } from "./homePageType";
 
-export const schemaTypes = [eventType];
+export const schemaTypes = [homePageType, eventType, historyPageType];

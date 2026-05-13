@@ -1,8 +1,8 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
 
-export const eventType = defineType({
-  name: "event",
-  title: "Event",
+export const historyPageType = defineType({
+  name: "historyPage",
+  title: "History Page",
   type: "document",
   fields: [
     defineField({
@@ -28,32 +28,6 @@ export const eventType = defineType({
       title: "Picture URL",
       type: "url",
       validation: (r) => r.required(),
-    }),
-    defineField({
-      name: "card",
-      title: "Listing Card Preview",
-      description: "Shown on the /events listing page. Event won't appear in the listing until this is filled in.",
-      type: "object",
-      fields: [
-        defineField({
-          name: "title",
-          title: "Title",
-          type: "string",
-          validation: (r) => r.required(),
-        }),
-        defineField({
-          name: "subtitle",
-          title: "Subtitle",
-          type: "string",
-          validation: (r) => r.required(),
-        }),
-        defineField({
-          name: "pictureUrl",
-          title: "Picture URL",
-          type: "url",
-          validation: (r) => r.required(),
-        }),
-      ],
     }),
 
     defineField({

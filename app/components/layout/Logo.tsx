@@ -1,4 +1,4 @@
-import { LOGO } from "./assets";
+import { LOGO } from "../assets";
 
 export function LogoBlack() {
   return (
