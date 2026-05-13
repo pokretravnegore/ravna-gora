@@ -19,7 +19,7 @@ export const structure: StructureResolver = (S) =>
         .child(
           S.document()
             .schemaType("currentNewspaper")
-            .documentId("currentNewspaper")
+            .documentId("3701ce5b-5efb-4826-96db-c19d9c18c6ef")
         ),
       S.divider(),
       // All other document types (events, historyPages, …)

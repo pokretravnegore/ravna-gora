@@ -20,7 +20,7 @@ export async function GET(
   await params;
 
   const data = await serverClient.fetch<{ pdfUrl: string } | null>(
-    `*[_type == "currentNewspaper" && _id == "currentNewspaper"][0] {
+    `*[_type == "currentNewspaper"][0] {
       "pdfUrl": pdfFile.asset->url
     }`
   );
