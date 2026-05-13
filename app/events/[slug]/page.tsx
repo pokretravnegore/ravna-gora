@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { ContentPageLayout } from "../../components/layout/ContentPageLayout";
-import { HeroImage } from "../../components/ui/HeroImage";
+import { EventHero } from "../../components/ui/EventHero";
 import { PageTitle } from "../../components/ui/PageTitle";
 import { ContentBlocks, type ContentBlock } from "../../components/content/ContentBlocks";
 import { client } from "../../../sanity/lib/client";
@@ -44,9 +44,21 @@ export default async function EventPage({
   if (!event) notFound();
 
   return (
-    <ContentPageLayout hero={<HeroImage src={event.pictureUrl} alt={event.title} />}>
+    <ContentPageLayout
+      heroFullWidth
+      hero={
+        <EventHero
+          title={event.title}
+          subtitle={event.subtitle}
+          pictureUrl={event.pictureUrl}
+        />
+      }
+    >
       <div className="flex flex-col gap-[var(--space-8)] py-[var(--space-8)] pb-[var(--space-10)]">
-        <PageTitle title={event.title} subtitle={event.subtitle} />
+        {/* Title shown on mobile/tablet only — desktop sees it in the hero */}
+        <div className="xl:hidden">
+          <PageTitle title={event.title} subtitle={event.subtitle} />
+        </div>
         {event.content && event.content.length > 0 && (
           <ContentBlocks blocks={event.content} />
         )}
