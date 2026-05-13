@@ -1,9 +1,10 @@
-import Link from "next/link";
-import { Navbar } from "./components/layout/Navbar";
-import { Footer } from "./components/layout/Footer";
-import { SectionHeading } from "./components/ui/SectionHeading";
-import { ICONS } from "./components/assets";
-import { client } from "../sanity/lib/client";
+import { getTranslations } from "next-intl/server";
+import { Link } from "../../i18n/navigation";
+import { Navbar } from "../components/layout/Navbar";
+import { Footer } from "../components/layout/Footer";
+import { SectionHeading } from "../components/ui/SectionHeading";
+import { ICONS } from "../components/assets";
+import { client } from "../../sanity/lib/client";
 
 export const revalidate = 60;
 
@@ -32,50 +33,6 @@ type HomePageData = {
   chapters: Chapter[];
 };
 
-// FIXME: slug for Part 1 was not confirmed (duplicate given); verify and update once known
-const histArticles = [
-  {
-    part: "Part 1",
-    title: "General Mihailovic and the Ravna Gora Movement",
-    img: A.hist1,
-    href: "/history/serbian-national-movement-outside-of-serbia",
-    excerpt:
-      "In seeking to most clearly illustrate the history of the Chetnik movement, no source is perhaps as useful and as historically indicative as are the wartime records of General Mihailovic (1893–1946). Though the future will present many more opportunities to examine these records…",
-  },
-  {
-    part: "Part 2",
-    title: "Foreign Testimonies About Chetniks and General Mihalovic",
-    img: A.hist2,
-    href: "/history/foreign-testimonies-about-chetniks-and-general-mihalovic",
-    excerpt:
-      "General Mihailovic was a tragic hero of the Serbian people in the Second World War. Serbian people consider him a hero, but there are those who say he is a traitor. The biggest honors for one person cannot come from within his own people, but from the independent foreign observers.",
-  },
-  {
-    part: "Part 3",
-    title: "Serbian national movement outside of Serbia",
-    img: A.hist3,
-    href: "/history/serbian-national-movement-outside-of-serbia",
-    excerpt:
-      "Sources used in this text are from the war archives of Dinara Chetnik Division. The first call to arms in occupied Europe issued by the future leader of the Third Serbian Uprising, General Dragoljub Draža Mihailović.",
-  },
-  {
-    part: "Part 4",
-    title: "Symbols and traditions",
-    img: A.hist4,
-    href: "/history/symbols-and-traditions",
-    excerpt:
-      "In keeping with its commitment to the study and preservation of Serbian history and cultural heritage, the Movement honors a set of established symbols and traditions that reflect its historical identity.",
-  },
-  {
-    part: "Part 5",
-    title: "Celebrations and commemorations",
-    img: A.hist5,
-    href: "/history/celebrations-and-commemorations",
-    excerpt:
-      "Commemorations form an important part of the Movement's cultural and community life, reflecting its dedication to historical memory and Serbian tradition. Alongside the observance of the Slava Đurđevdan, members mark dates of lasting significance.",
-  },
-];
-
 const FALLBACK_CHAPTERS: Chapter[] = [
   { name: "United States" },
   { name: "Canada" },
@@ -83,13 +40,20 @@ const FALLBACK_CHAPTERS: Chapter[] = [
   { name: "Australia" },
 ];
 
-const FALLBACK_LATEST_ISSUE: LatestIssue = {
-  coverUrl: A.magazine,
-  date: "March 2026",
-  number: "#764",
-};
+// FIXME: slug for Part 1 was not confirmed (duplicate given); verify and update once known
+const HIST_HREFS = [
+  "/history/serbian-national-movement-outside-of-serbia",
+  "/history/foreign-testimonies-about-chetniks-and-general-mihalovic",
+  "/history/serbian-national-movement-outside-of-serbia",
+  "/history/symbols-and-traditions",
+  "/history/celebrations-and-commemorations",
+];
+
+const HIST_IMGS = [A.hist1, A.hist2, A.hist3, A.hist4, A.hist5];
 
 export default async function Home() {
+  const t = await getTranslations("home");
+
   const homePage: HomePageData | null = await client.fetch(
     `*[_type == "homePage" && _id == "homePage"][0] {
       pageTitle,
@@ -100,11 +64,19 @@ export default async function Home() {
     }`
   );
 
-  const pageTitle    = homePage?.pageTitle    ?? "Movement of Serbian Chetniks Ravne Gore";
-  const pageSubtitle = homePage?.pageSubtitle ?? "Guardians of the Ravna Gora ideals—past, present, and future.";
+  const pageTitle    = homePage?.pageTitle    ?? t("fallbackTitle");
+  const pageSubtitle = homePage?.pageSubtitle ?? t("fallbackSubtitle");
   const heroImageUrl = homePage?.heroImageUrl ?? A.hero;
-  const latestIssue  = homePage?.latestIssue  ?? FALLBACK_LATEST_ISSUE;
+  const latestIssue  = homePage?.latestIssue  ?? { coverUrl: A.magazine, date: "March 2026", number: "#764" };
   const chapters     = homePage?.chapters?.length ? homePage.chapters : FALLBACK_CHAPTERS;
+
+  const histArticles = (["1", "2", "3", "4", "5"] as const).map((n, i) => ({
+    part:    t(`hist${n}Part`   as `hist${typeof n}Part`),
+    title:   t(`hist${n}Title`  as `hist${typeof n}Title`),
+    excerpt: t(`hist${n}Excerpt`as `hist${typeof n}Excerpt`),
+    img:     HIST_IMGS[i],
+    href:    HIST_HREFS[i],
+  }));
 
   return (
     <div className="min-h-screen bg-offwhite-1 flex flex-col">
@@ -123,7 +95,7 @@ export default async function Home() {
 
             <div className="w-full h-[220px] md:h-[360px] xl:h-[507px] overflow-hidden relative">
               <img
-                alt="Historical photograph of the Serbian Chetnik Movement"
+                alt={t("heroImageAlt")}
                 src={heroImageUrl}
                 className="absolute left-0 w-full max-w-none"
                 style={{ height: "204.22%", top: "-21.82%" }}
@@ -137,12 +109,7 @@ export default async function Home() {
             {/* ── Welcome quote ── */}
             <div className="flex items-center gap-4 xl:gap-[73px]">
               <div className="hidden xl:block w-[51px] border-t-2 border-black shrink-0" />
-              <p className="type-h1 text-black text-center flex-1">
-                Welcome to the official website of the Movement of Serbian Chetniks Ravne
-                Gore. Founded more than seventy years ago, the Movement was established to
-                safeguard the Ravna Gora ideals forged in the struggle for the survival of
-                the Serbian people during World War II.
-              </p>
+              <p className="type-h1 text-black text-center flex-1">{t("welcomeQuote")}</p>
               <div className="hidden xl:block w-[51px] border-t-2 border-black shrink-0" />
             </div>
 
@@ -151,7 +118,7 @@ export default async function Home() {
               <div className="flex flex-col gap-[var(--space-3)] w-full max-w-[464px]">
                 <div className="relative h-[300px] md:h-[360px] xl:h-[420px] overflow-hidden">
                   <img
-                    alt="Latest issue of Srbija newspaper"
+                    alt={t("latestIssueAlt")}
                     src={latestIssue.coverUrl}
                     className="absolute inset-0 size-full object-cover"
                   />
@@ -162,14 +129,12 @@ export default async function Home() {
                   <div className="flex items-center justify-between">
                     <div className="flex flex-col gap-[4px] flex-1 min-w-0">
                       <p className="type-large text-black">{latestIssue.date}</p>
-                      <h3 className="type-h3 text-black">Latest Issue ({latestIssue.number})</h3>
+                      <h3 className="type-h3 text-black">{t("latestIssueHeading", { number: latestIssue.number })}</h3>
                     </div>
-                    <img alt="Open issue" src={A.arrowLg} className="size-[45px] shrink-0 ml-2" />
+                    <img alt={t("openIssueAlt")} src={A.arrowLg} className="size-[45px] shrink-0 ml-2" />
                   </div>
 
-                  <p className="type-body text-black">
-                    Read the latest newspaper issue. Stay up to date with the most recent news.
-                  </p>
+                  <p className="type-body text-black">{t("latestIssueDesc")}</p>
                 </div>
               </div>
             </div>
@@ -178,28 +143,15 @@ export default async function Home() {
             <section className="flex flex-col xl:flex-row items-start justify-between gap-[var(--space-10)] xl:gap-[73px]">
               <div className="flex flex-col gap-[var(--space-big)] w-full xl:w-[586px] shrink-0">
                 <div className="flex flex-col gap-[var(--space-text-tp)]">
-                  <SectionHeading title="About" />
+                  <SectionHeading title={t("aboutHeading")} />
 
                   <div className="flex flex-col gap-[var(--space-text-p)]">
-                    <p className="type-body text-black">
-                      The Movement of Serbian Chetniks Ravne Gore exists to preserve and uphold
-                      the ideals associated with Ravna Gora and Dinara and the legacy of those
-                      who fought for the Serbian people and their Allies during the Second World
-                      War. The organization was founded seventy years ago by Duke Momčilo Đujić
-                      and his men. In the difficult years that followed the war, many of them
-                      endured prolonged stays in Allied Displacement Camps before being permitted
-                      to emigrate to the free world, including the United States, Canada,
-                      Australia, and Great Britain.
-                    </p>
-                    <p className="type-body text-black">
-                      Today, the Movement represents a global community united by historical
-                      memory, shared heritage, and a commitment to preserving the traditions,
-                      experiences, and perspectives that shaped its origins.
-                    </p>
+                    <p className="type-body text-black">{t("aboutP1")}</p>
+                    <p className="type-body text-black">{t("aboutP2")}</p>
                   </div>
                 </div>
 
-                <p className="type-h4 text-black text-center">Load More   →</p>
+                <p className="type-h4 text-black text-center">{t("loadMore")}</p>
               </div>
 
               <div className="flex flex-col gap-[10px] w-full xl:w-[716px] p-[10px]">
@@ -211,15 +163,15 @@ export default async function Home() {
                   />
                 </div>
                 <div className="flex flex-col">
-                  <p className="type-body text-black">Photograph</p>
-                  <p className="type-caption text-gray-2">1940</p>
+                  <p className="type-body text-black">{t("photograph")}</p>
+                  <p className="type-caption text-gray-2">{t("photoYear")}</p>
                 </div>
               </div>
             </section>
 
             {/* ── Historical Introduction ── */}
             <section className="flex flex-col gap-[var(--space-text-tp)]">
-              <SectionHeading title="Historical Introduction" />
+              <SectionHeading title={t("historicalIntroHeading")} />
 
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-[18px] gap-y-[var(--space-card-v)]">
                 {histArticles.map(({ part, title, img, href, excerpt }) => (
@@ -240,7 +192,7 @@ export default async function Home() {
                             <h3 className="type-h3 text-black">{title}</h3>
                           </div>
                           <img
-                            alt="Open article"
+                            alt={t("openArticleAlt")}
                             src={A.arrowLg}
                             className="size-[45px] shrink-0 ml-2 mt-1"
                           />
@@ -256,7 +208,7 @@ export default async function Home() {
 
             {/* ── Chapters ── */}
             <section className="flex flex-col gap-[var(--space-text-tp)]">
-              <SectionHeading title="Chapters" />
+              <SectionHeading title={t("chaptersHeading")} />
 
               <div className="flex justify-center">
                 <div className="w-full max-w-[949px] flex flex-col gap-[var(--space-4)]">
@@ -267,8 +219,8 @@ export default async function Home() {
                         <p className="type-h2 text-black">{name}</p>
                         {websiteUrl && (
                           <a href={websiteUrl} className="flex items-center gap-[var(--space-2)]">
-                            <p className="type-body text-black">Visit</p>
-                            <img alt="Visit" src={A.arrowSm} className="size-[23px]" />
+                            <p className="type-body text-black">{t("visit")}</p>
+                            <img alt={t("visitAlt")} src={A.arrowSm} className="size-[23px]" />
                           </a>
                         )}
                       </div>
@@ -283,27 +235,11 @@ export default async function Home() {
             <section className="pb-[var(--space-8)]">
               <div className="flex flex-col xl:flex-row items-start xl:items-center gap-[var(--space-10)] xl:gap-[141px]">
                 <div className="flex flex-col gap-[var(--space-text-tp)] w-full xl:w-[706px]">
-                  <SectionHeading title="Membership" />
+                  <SectionHeading title={t("membershipHeading")} />
 
                   <div className="flex flex-col gap-[var(--space-text-p)]">
-                    <p className="type-body text-black">
-                      Membership in the Movement represents a commitment to historical memory,
-                      cultural continuity, and the preservation of Serbian heritage. By joining,
-                      members support ongoing efforts to safeguard archival materials, preserve
-                      historical records, and contribute to the responsible transmission of
-                      history to future generations. Membership also provides a meaningful way
-                      for descendants and family members to remain connected to their roots and
-                      to the historical experiences that shaped earlier generations.
-                    </p>
-                    <p className="type-body text-black">
-                      Members receive the journal Srbija, access to developing digital archives
-                      and historical resources, and invitations to annual gatherings,
-                      commemorative events, and community activities. For families and younger
-                      generations, participation offers opportunities to engage with history,
-                      community, and shared cultural traditions. Above all, membership affirms
-                      participation in a tradition rooted in remembrance, identity, and shared
-                      heritage.
-                    </p>
+                    <p className="type-body text-black">{t("membershipP1")}</p>
+                    <p className="type-body text-black">{t("membershipP2")}</p>
                   </div>
                 </div>
 
@@ -311,7 +247,7 @@ export default async function Home() {
                   href="#"
                   className="bg-blue-2 text-white type-h4 text-center w-full xl:w-[464px] py-[26px] px-5 flex items-center justify-center shrink-0"
                 >
-                  Join the Movement   →
+                  {t("joinCTA")}
                 </a>
               </div>
             </section>

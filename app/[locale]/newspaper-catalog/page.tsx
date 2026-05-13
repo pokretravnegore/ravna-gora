@@ -1,7 +1,8 @@
-import { Navbar } from "../components/layout/Navbar";
-import { Footer } from "../components/layout/Footer";
-import { CatalogHeader } from "../components/ui/CatalogHeader";
-import { CatalogCard }   from "../components/ui/CatalogCard";
+import { getTranslations } from "next-intl/server";
+import { Navbar } from "../../components/layout/Navbar";
+import { Footer } from "../../components/layout/Footer";
+import { CatalogHeader } from "../../components/ui/CatalogHeader";
+import { CatalogCard }   from "../../components/ui/CatalogCard";
 
 // Figma MCP asset URLs — expires 7 days after generation
 const A = {
@@ -22,7 +23,9 @@ const ISSUES: Issue[] = [
   { number: "#764", date: "MARCH 2026",    coverImage: A.issueCover },
 ];
 
-export default function NewspaperCatalog() {
+export default async function NewspaperCatalog() {
+  const t = await getTranslations("newspaperCatalog");
+
   return (
     <div className="min-h-screen bg-offwhite-1 flex flex-col">
       <Navbar />
@@ -32,14 +35,14 @@ export default function NewspaperCatalog() {
 
           <CatalogHeader
             imageSrc={A.hero}
-            imageAlt="Historical photograph"
-            title="Newspaper Archive"
-            description="Browse all issues since 1965"
+            imageAlt={t("imageAlt")}
+            title={t("title")}
+            description={t("description")}
           >
             {/* Decade filter bar — horizontally scrollable */}
             <div className="flex items-center gap-[var(--space-list-h)] overflow-x-auto pb-1">
               <button className="bg-black text-white type-large whitespace-nowrap shrink-0 px-[var(--btn-big-h)] py-[var(--btn-big-v)]">
-                All
+                {t("all")}
               </button>
               {DECADES.map((decade) => (
                 <button
@@ -64,7 +67,7 @@ export default function NewspaperCatalog() {
               ))}
             </div>
 
-            <p className="type-h4 text-black text-center">Load More →</p>
+            <p className="type-h4 text-black text-center">{t("loadMore")}</p>
           </div>
 
         </div>

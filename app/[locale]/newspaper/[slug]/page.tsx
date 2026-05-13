@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "../../../../i18n/navigation";
 import type { PDFDocumentProxy } from "pdfjs-dist";
 
 const MIN_SCALE = 0.25;
@@ -10,6 +11,7 @@ const MAX_SCALE = 5;
 
 export default function NewspaperViewer() {
   const { slug } = useParams<{ slug: string }>();
+  const t = useTranslations("newspaper");
 
   const [numPages, setNumPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -186,7 +188,7 @@ export default function NewspaperViewer() {
           href="/newspaper-catalog"
           className="text-sm text-[#888] hover:text-[#e5e5e5] transition-colors mr-2 whitespace-nowrap"
         >
-          ← Catalog
+          {t("backToCatalog")}
         </Link>
 
         <div className="w-px h-5 bg-[#333] shrink-0" />
@@ -196,7 +198,7 @@ export default function NewspaperViewer() {
           disabled={currentPage <= 1 || numPages === 0}
           className="px-3 py-1 text-sm rounded border border-transparent hover:bg-[#333] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
-          ‹ Prev
+          {t("prev")}
         </button>
 
         <div className="flex items-center gap-1 text-sm text-[#888] min-w-[90px] justify-center">
@@ -220,7 +222,7 @@ export default function NewspaperViewer() {
           disabled={currentPage >= numPages || numPages === 0}
           className="px-3 py-1 text-sm rounded border border-transparent hover:bg-[#333] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
-          Next ›
+          {t("next")}
         </button>
 
         <div className="flex-1" />
@@ -230,7 +232,7 @@ export default function NewspaperViewer() {
           disabled={numPages === 0}
           className="px-3 py-1 text-sm rounded border border-transparent hover:bg-[#333] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
-          −
+          {t("zoomOut")}
         </button>
         <span className="text-sm text-[#888] min-w-[52px] text-center tabular-nums">
           {numPages > 0 ? `${Math.round(scale * 100)}%` : "–"}
@@ -240,14 +242,14 @@ export default function NewspaperViewer() {
           disabled={numPages === 0}
           className="px-3 py-1 text-sm rounded border border-transparent hover:bg-[#333] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
-          +
+          {t("zoomIn")}
         </button>
         <button
           onClick={fitWidth}
           disabled={numPages === 0}
           className="px-3 py-1 text-sm rounded border border-transparent hover:bg-[#333] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
-          Fit
+          {t("fit")}
         </button>
       </div>
 
@@ -264,13 +266,13 @@ export default function NewspaperViewer() {
 
         {loading && !error && (
           <div className="absolute inset-0 flex items-center justify-center text-[#888] text-sm">
-            Loading…
+            {t("loading")}
           </div>
         )}
 
         {error && (
           <div className="absolute inset-0 flex items-center justify-center text-[#888] text-sm">
-            Failed to load PDF.
+            {t("failedToLoad")}
           </div>
         )}
       </div>

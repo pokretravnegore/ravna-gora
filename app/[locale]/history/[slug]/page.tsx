@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
-import { ContentPageLayout } from "../../components/layout/ContentPageLayout";
-import { EventHero } from "../../components/ui/EventHero";
-import { PageTitle } from "../../components/ui/PageTitle";
-import { ContentBlocks, type ContentBlock } from "../../components/content/ContentBlocks";
-import { client } from "../../../sanity/lib/client";
+import { ContentPageLayout } from "../../../components/layout/ContentPageLayout";
+import { EventHero } from "../../../components/ui/EventHero";
+import { PageTitle } from "../../../components/ui/PageTitle";
+import { ContentBlocks, type ContentBlock } from "../../../components/content/ContentBlocks";
+import { client } from "../../../../sanity/lib/client";
 
 export const revalidate = 60;
 

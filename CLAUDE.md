@@ -18,16 +18,7 @@ No test suite is configured.
 
 ## Architecture
 
-**Next.js App Router** project. All routes live under `app/` as `page.tsx` files. Shared UI is in `app/components/`.
-
-### Pages
-
-- `/` — Home (`app/page.tsx`): full landing page with hero, latest newspaper card, about section, historical articles grid, chapters list, membership CTA
-- `/about` — About page (`app/about/page.tsx`)
-- `/events` — Events listing (`app/events/page.tsx`): grid of event cards with dummy data, intended for CMS replacement
-- `/newspaper-catalog` — Archive browser (`app/newspaper-catalog/page.tsx`): decade filter bar + issues grid with dummy data, intended for CMS replacement
-
-Every page wraps content in `<Navbar /> … <Footer />` from `app/components/`.
+**Next.js App Router** project. All routes live under `app/` as `page.tsx` files. Shared UI is in `app/components/` (split into `layout/`, `ui/`, and `content/`).
 
 ### Design system
 
@@ -55,6 +46,52 @@ Token sizes are responsive — defined at three breakpoints (phone default, `768
 - `gray-1/2/3` — text hierarchy
 
 **Breakpoints**: phone (default) → tablet `md` (768px) → desktop `xl` (1280px). The codebase uses `md:` and `xl:` variants; `lg:` is not used.
+
+### Pages
+
+- `/` — Home (`app/page.tsx`): full landing page with hero, latest newspaper card, about section, historical articles grid, chapters list, membership CTA
+- `/about` — About page (`app/about/page.tsx`)
+- `/events` — Events listing (`app/events/page.tsx`): grid of event cards fetched from Sanity
+- `/events/[slug]` — Event detail (`app/events/[slug]/page.tsx`): uses `ContentPageLayout` + `ContentBlocks`
+- `/history/[slug]` — History article detail (`app/history/[slug]/page.tsx`): same layout pattern as events
+- `/newspaper-catalog` — Archive browser (`app/newspaper-catalog/page.tsx`): decade filter + issues grid
+- `/newspaper/[slug]` — PDF viewer (`app/newspaper/[slug]/page.tsx`): full-screen standalone page, **no Navbar/Footer**, client component using `pdfjs-dist`. Fetches PDF via `/api/newspaper/[slug]`
+- `/studio/[[...tool]]` — Embedded Sanity Studio
+- `/api/newspaper/[slug]` — API route that redirects to the Sanity-hosted PDF URL; falls back to a local file at `/Users/adtimokhin/Desktop/newspaper.pdf` during development (FIXME: remove once CMS is populated)
+
+Every page except the newspaper viewer wraps content in `<Navbar /> … <Footer />`.
+
+### Content pages
+
+Detail pages (`/events/[slug]`, `/history/[slug]`) share a layout: `ContentPageLayout` (hero + narrow content column, first 6 of 12 cols on desktop) and `ContentBlocks` for the body. `ContentBlocks` dispatches on `_type` to one of five block renderers:
+
+| `_type` | Component |
+|---|---|
+| `sectionTitle` | `SectionHeading` |
+| `paragraph` | `ParagraphView` |
+| `quote` | `QuoteView` |
+| `pictureBig` | `PictureBigView` |
+| `pictureTwoPictures` | `TwoPicturesView` |
+
+When adding a new block type, add it to the schema (`sanity/schemaTypes/`), the union type in `ContentBlocks.tsx`, the `renderBlock` switch, and a new UI component in `app/components/ui/`.
+
+### Sanity CMS
+
+The CMS client is in `sanity/lib/client.ts` (CDN-cached, for page fetching) and instantiated directly in the API route without CDN for always-fresh data. Config: `sanity.config.ts`, CLI: `sanity.cli.ts`.
+
+Schema types in `sanity/schemaTypes/`:
+- `currentNewspaper` — singleton; holds a `file` asset (PDF). Served via `/api/newspaper/[slug]`.
+- `event` — `title`, `slug`, `subtitle`, `pictureUrl` (raw URL string), `card` (listing preview object), `content` array
+- `historyPage` — `title`, `slug`, `subtitle`, `pictureUrl` (raw URL string), `content` array
+- `homePage` — drives home page content
+
+**Images in CMS content use plain URL strings** (`type: "url"`), not Sanity's native `image` type with asset references. Do not add `sanity/lib/image.ts` URL builders for these fields.
+
+Pages that fetch from Sanity use `export const revalidate = 60` (ISR, 60-second TTL).
+
+### Language toggle
+
+The Navbar includes a cookie-based language switcher cycling through `english → serbian_cyrilics → serbian_latin`. Cookie name: `lang`. The toggle is UI-only on this branch — content translations are not yet wired up. The `HISTORY_LINKS` array in `Navbar.tsx` must stay in sync with the equivalent array in `Footer.tsx` (see the `FIXME` comment).
 
 ### Assets
 

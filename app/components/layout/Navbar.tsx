@@ -1,33 +1,24 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
+import { Link, useRouter, usePathname } from "../../../i18n/navigation";
 import { LogoBlack } from "./Logo";
 
-type Lang = "english" | "serbian_cyrilics" | "serbian_latin";
+type Locale = "en" | "sr-cyrl" | "sr-latn";
 
-const LANG_DISPLAY: Record<Lang, string> = {
-  english: "EN",
-  serbian_cyrilics: "SB (cr)",
-  serbian_latin: "SB (lt)",
+const LOCALE_DISPLAY: Record<Locale, string> = {
+  en: "EN",
+  "sr-cyrl": "СБ (ћр)",
+  "sr-latn": "SB (lt)",
 };
 
-const LANG_NEXT: Record<Lang, Lang> = {
-  english: "serbian_cyrilics",
-  serbian_cyrilics: "serbian_latin",
-  serbian_latin: "english",
+const LOCALE_NEXT: Record<Locale, Locale> = {
+  en: "sr-cyrl",
+  "sr-cyrl": "sr-latn",
+  "sr-latn": "en",
 };
-
-function readLangCookie(): Lang {
-  const match = document.cookie.match(/(?:^|; )lang=([^;]*)/);
-  const val = match?.[1];
-  if (val === "serbian_cyrilics" || val === "serbian_latin") return val;
-  return "english";
-}
-
-function writeLangCookie(lang: Lang) {
-  document.cookie = `lang=${lang};path=/;max-age=${60 * 60 * 24 * 365};SameSite=Lax`;
-}
 
 function GlobeIcon() {
   return (
@@ -49,56 +40,45 @@ function GlobeIcon() {
   );
 }
 
-const NAV_LINKS = [
-  { label: "About Us", href: "/about" },
-  { label: "Events", href: "/events" },
-  { label: "Newspaper", href: "/newspaper-catalog" },
-  { label: "Membership", href: "#" },
-];
-
-const EXPLORE_LINKS = [
-  { label: "About Us", href: "/about" },
-  { label: "Events", href: "/events" },
-  { label: "Newspaper Catalog", href: "/newspaper-catalog" },
-  { label: "Home", href: "/" },
-];
-
-// FIXME: keep in sync with Footer.tsx HISTORY_LINKS — slug for Part 1 not yet confirmed
-const HISTORY_LINKS = [
-  {
-    label: "Movement in Serbia",
-    href: "/history/serbian-national-movement-outside-of-serbia",
-  },
-  {
-    label: "Testimonies",
-    href: "/history/foreign-testimonies-about-chetniks-and-general-mihalovic",
-  },
-  {
-    label: "Movement Outside of Serbia",
-    href: "/history/serbian-national-movement-outside-of-serbia",
-  },
-  { label: "Symbols & Traditions", href: "/history/symbols-and-traditions" },
-  { label: "Celebrations", href: "/history/celebrations-and-commemorations" },
-];
-
 export function Navbar() {
+  const t = useTranslations("nav");
+  const locale = useLocale() as Locale;
+  const router = useRouter();
+  const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [lang, setLang] = useState<Lang>("english");
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [menuOpen]);
 
-  useEffect(() => {
-    setLang(readLangCookie());
-  }, []);
-
   function cycleLang() {
-    const next = LANG_NEXT[lang];
-    writeLangCookie(next);
-    setLang(next);
+    const next = LOCALE_NEXT[locale];
+    router.replace(pathname, { locale: next });
   }
+
+  const NAV_LINKS = [
+    { labelKey: "aboutUs" as const, href: "/about" },
+    { labelKey: "events" as const, href: "/events" },
+    { labelKey: "newspaper" as const, href: "/newspaper-catalog" },
+    { labelKey: "membership" as const, href: "#" },
+  ];
+
+  const EXPLORE_LINKS = [
+    { labelKey: "exploreLinks.aboutUs" as const, href: "/about" },
+    { labelKey: "exploreLinks.events" as const, href: "/events" },
+    { labelKey: "exploreLinks.newspaperCatalog" as const, href: "/newspaper-catalog" },
+    { labelKey: "exploreLinks.home" as const, href: "/" },
+  ];
+
+  // FIXME: keep in sync with Footer.tsx HISTORY_LINKS — slug for Part 1 not yet confirmed
+  const HISTORY_LINKS = [
+    { labelKey: "historyLinks.movementInSerbia" as const, href: "/history/serbian-national-movement-outside-of-serbia" },
+    { labelKey: "historyLinks.testimonies" as const, href: "/history/foreign-testimonies-about-chetniks-and-general-mihalovic" },
+    { labelKey: "historyLinks.movementOutsideSerbia" as const, href: "/history/serbian-national-movement-outside-of-serbia" },
+    { labelKey: "historyLinks.symbolsAndTraditions" as const, href: "/history/symbols-and-traditions" },
+    { labelKey: "historyLinks.celebrations" as const, href: "/history/celebrations-and-commemorations" },
+  ];
 
   return (
     <>
@@ -111,11 +91,11 @@ export function Navbar() {
           <div className="flex items-center">
             {/* Desktop: nav links + Login + language switcher in one row with vertical dividers */}
             <div className="hidden xl:flex items-center">
-              {[...NAV_LINKS, { label: "Login", href: "#" }].map(({ label, href }, i) => (
-                <div key={label} className="flex items-center">
+              {[...NAV_LINKS, { labelKey: "login" as const, href: "#" }].map(({ labelKey, href }, i) => (
+                <div key={labelKey} className="flex items-center">
                   {i > 0 && <div className="w-px h-[18px] bg-black mx-[var(--space-3)]" />}
                   <Link href={href} className="type-ui-medium font-bold text-black whitespace-nowrap">
-                    {label}
+                    {t(labelKey)}
                   </Link>
                 </div>
               ))}
@@ -123,10 +103,10 @@ export function Navbar() {
               <button
                 onClick={cycleLang}
                 className="w-22 flex items-center gap-1.5 type-ui-medium font-bold text-black"
-                aria-label="Switch language"
+                aria-label={t("switchLanguage")}
               >
                 <GlobeIcon />
-                <span>{LANG_DISPLAY[lang]}</span>
+                <span>{LOCALE_DISPLAY[locale]}</span>
               </button>
             </div>
 
@@ -134,42 +114,12 @@ export function Navbar() {
             <button
               onClick={() => setMenuOpen(true)}
               className="xl:hidden p-1"
-              aria-label="Open menu"
+              aria-label={t("openMenu")}
             >
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                aria-hidden="true"
-              >
-                <line
-                  x1="3"
-                  y1="6"
-                  x2="21"
-                  y2="6"
-                  stroke="black"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-                <line
-                  x1="3"
-                  y1="12"
-                  x2="21"
-                  y2="12"
-                  stroke="black"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-                <line
-                  x1="3"
-                  y1="18"
-                  x2="21"
-                  y2="18"
-                  stroke="black"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <line x1="3" y1="6"  x2="21" y2="6"  stroke="black" strokeWidth="2" strokeLinecap="round" />
+                <line x1="3" y1="12" x2="21" y2="12" stroke="black" strokeWidth="2" strokeLinecap="round" />
+                <line x1="3" y1="18" x2="21" y2="18" stroke="black" strokeWidth="2" strokeLinecap="round" />
               </svg>
             </button>
           </div>
@@ -188,33 +138,11 @@ export function Navbar() {
               <button
                 onClick={() => setMenuOpen(false)}
                 className="p-1"
-                aria-label="Close menu"
+                aria-label={t("closeMenu")}
               >
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  aria-hidden="true"
-                >
-                  <line
-                    x1="18"
-                    y1="6"
-                    x2="6"
-                    y2="18"
-                    stroke="#153c8c"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                  />
-                  <line
-                    x1="6"
-                    y1="6"
-                    x2="18"
-                    y2="18"
-                    stroke="#153c8c"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                  />
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <line x1="18" y1="6"  x2="6"  y2="18" stroke="#153c8c" strokeWidth="2" strokeLinecap="round" />
+                  <line x1="6"  y1="6"  x2="18" y2="18" stroke="#153c8c" strokeWidth="2" strokeLinecap="round" />
                 </svg>
               </button>
             </div>
@@ -225,16 +153,16 @@ export function Navbar() {
             <div className="flex flex-col gap-[var(--space-4)]">
               {/* Explore */}
               <div className="flex flex-col gap-[var(--space-5)]">
-                <p className="type-h4 text-gray-1">Explore</p>
+                <p className="type-h4 text-gray-1">{t("explore")}</p>
                 <div className="flex flex-col gap-[var(--space-2)]">
-                  {EXPLORE_LINKS.map(({ label, href }) => (
+                  {EXPLORE_LINKS.map(({ labelKey, href }) => (
                     <Link
-                      key={label}
+                      key={labelKey}
                       href={href}
                       onClick={() => setMenuOpen(false)}
                       className="type-small-medium text-gray-1"
                     >
-                      {label}
+                      {t(labelKey)}
                     </Link>
                   ))}
                 </div>
@@ -244,16 +172,16 @@ export function Navbar() {
 
               {/* History */}
               <div className="flex flex-col gap-[var(--space-5)]">
-                <p className="type-h4 text-gray-1">History</p>
+                <p className="type-h4 text-gray-1">{t("history")}</p>
                 <div className="flex flex-col gap-[var(--space-2)]">
-                  {HISTORY_LINKS.map(({ label, href }) => (
+                  {HISTORY_LINKS.map(({ labelKey, href }) => (
                     <Link
-                      key={label}
+                      key={labelKey}
                       href={href}
                       onClick={() => setMenuOpen(false)}
                       className="type-small-medium text-gray-1 whitespace-nowrap"
                     >
-                      {label}
+                      {t(labelKey)}
                     </Link>
                   ))}
                 </div>
@@ -267,7 +195,7 @@ export function Navbar() {
                 onClick={() => setMenuOpen(false)}
                 className="type-h4 text-gray-1"
               >
-                Login
+                {t("login")}
               </Link>
 
               <div className="h-px bg-black/15 w-full" />
@@ -276,10 +204,10 @@ export function Navbar() {
               <button
                 onClick={cycleLang}
                 className="flex items-center gap-2 type-h4 text-gray-1"
-                aria-label="Switch language"
+                aria-label={t("switchLanguage")}
               >
                 <GlobeIcon />
-                <span>{LANG_DISPLAY[lang]}</span>
+                <span>{LOCALE_DISPLAY[locale]}</span>
               </button>
             </div>
           </div>

@@ -1,8 +1,9 @@
-import { Navbar } from "../components/layout/Navbar";
-import { Footer } from "../components/layout/Footer";
-import { CatalogHeader } from "../components/ui/CatalogHeader";
-import { CatalogCard } from "../components/ui/CatalogCard";
-import { client } from "../../sanity/lib/client";
+import { getTranslations } from "next-intl/server";
+import { Navbar } from "../../components/layout/Navbar";
+import { Footer } from "../../components/layout/Footer";
+import { CatalogHeader } from "../../components/ui/CatalogHeader";
+import { CatalogCard } from "../../components/ui/CatalogCard";
+import { client } from "../../../sanity/lib/client";
 
 export const revalidate = 60;
 
@@ -28,6 +29,7 @@ async function getEvents(): Promise<EventData[]> {
 }
 
 export default async function Events() {
+  const t = await getTranslations("events");
   const events = await getEvents();
 
   return (
@@ -39,14 +41,14 @@ export default async function Events() {
 
           <CatalogHeader
             imageSrc={A.hero}
-            imageAlt="Events"
-            title="Events"
-            description="Browse our archive of past and upcoming events."
+            imageAlt={t("imageAlt")}
+            title={t("title")}
+            description={t("description")}
           />
 
           <div className="flex flex-col gap-[var(--space-9)] pb-[var(--space-8)]">
             {events.length === 0 ? (
-              <p className="type-body text-gray-2">No events published yet.</p>
+              <p className="type-body text-gray-2">{t("noEvents")}</p>
             ) : (
               <div className="grid grid-cols-1 xl:grid-cols-3 gap-x-[20px] gap-y-[var(--space-card-v)] w-full">
                 {events.map((event) => (
