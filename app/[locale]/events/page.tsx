@@ -18,19 +18,25 @@ type EventData = {
   card: { title: string; subtitle: string; pictureUrl: string };
 };
 
-async function getEvents(): Promise<EventData[]> {
+async function getEvents(locale: string): Promise<EventData[]> {
   return client.fetch(
-    `*[_type == "event" && defined(card)] | order(_createdAt desc) {
+    `*[_type == "event" && defined(card) && (language == $locale || (!defined(language) && $locale == "en"))] | order(_createdAt desc) {
       _id,
       "slug": slug.current,
       card
-    }`
+    }`,
+    { locale }
   );
 }
 
-export default async function Events() {
+export default async function Events({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
   const t = await getTranslations("events");
-  const events = await getEvents();
+  const events = await getEvents(locale);
 
   return (
     <div className="min-h-screen bg-offwhite-1 flex flex-col">

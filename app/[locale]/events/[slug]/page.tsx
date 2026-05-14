@@ -14,21 +14,22 @@ type EventDetail = {
   content?: ContentBlock[];
 };
 
-async function getEvent(slug: string): Promise<EventDetail | null> {
+async function getEvent(slug: string, locale: string): Promise<EventDetail | null> {
   return client.fetch(
-    `*[_type == "event" && slug.current == $slug][0] {
+    `*[_type == "event" && slug.current == $slug && (language == $locale || (!defined(language) && $locale == "en"))][0] {
       title,
       subtitle,
       pictureUrl,
       content
     }`,
-    { slug }
+    { slug, locale }
   );
 }
 
 export async function generateStaticParams() {
+  // Slugs are shared across languages — return unique slugs from the base (English) documents
   const slugs: { slug: string }[] = await client.fetch(
-    `*[_type == "event"] { "slug": slug.current }`
+    `*[_type == "event" && (language == "en" || !defined(language))] { "slug": slug.current }`
   );
   return slugs;
 }
@@ -36,10 +37,10 @@ export async function generateStaticParams() {
 export default async function EventPage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 }) {
-  const { slug } = await params;
-  const event = await getEvent(slug);
+  const { locale, slug } = await params;
+  const event = await getEvent(slug, locale);
 
   if (!event) notFound();
 

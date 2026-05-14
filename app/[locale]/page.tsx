@@ -51,17 +51,23 @@ const HIST_HREFS = [
 
 const HIST_IMGS = [A.hist1, A.hist2, A.hist3, A.hist4, A.hist5];
 
-export default async function Home() {
+export default async function Home({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
   const t = await getTranslations("home");
 
   const homePage: HomePageData | null = await client.fetch(
-    `*[_type == "homePage" && _id == "homePage"][0] {
+    `*[_type == "homePage" && (language == $locale || (!defined(language) && $locale == "en"))][0] {
       pageTitle,
       pageSubtitle,
       heroImageUrl,
       latestIssue,
       chapters
-    }`
+    }`,
+    { locale }
   );
 
   const pageTitle    = homePage?.pageTitle    ?? t("fallbackTitle");

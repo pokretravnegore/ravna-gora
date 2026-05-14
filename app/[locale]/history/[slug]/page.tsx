@@ -14,21 +14,22 @@ type HistoryPageDetail = {
   content?: ContentBlock[];
 };
 
-async function getHistoryPage(slug: string): Promise<HistoryPageDetail | null> {
+async function getHistoryPage(slug: string, locale: string): Promise<HistoryPageDetail | null> {
   return client.fetch(
-    `*[_type == "historyPage" && slug.current == $slug][0] {
+    `*[_type == "historyPage" && slug.current == $slug && (language == $locale || (!defined(language) && $locale == "en"))][0] {
       title,
       subtitle,
       pictureUrl,
       content
     }`,
-    { slug }
+    { slug, locale }
   );
 }
 
 export async function generateStaticParams() {
+  // Slugs are shared across languages — return unique slugs from the base (English) documents
   const slugs: { slug: string }[] = await client.fetch(
-    `*[_type == "historyPage"] { "slug": slug.current }`
+    `*[_type == "historyPage" && (language == "en" || !defined(language))] { "slug": slug.current }`
   );
   return slugs;
 }
@@ -36,10 +37,10 @@ export async function generateStaticParams() {
 export default async function HistoryPage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 }) {
-  const { slug } = await params;
-  const page = await getHistoryPage(slug);
+  const { locale, slug } = await params;
+  const page = await getHistoryPage(slug, locale);
 
   if (!page) notFound();
 

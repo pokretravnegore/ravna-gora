@@ -1,4 +1,5 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
+import { slugIsUniquePerLanguage } from "../lib/slugIsUniquePerLanguage";
 
 export const eventType = defineType({
   name: "event",
@@ -15,7 +16,7 @@ export const eventType = defineType({
       name: "slug",
       title: "Slug",
       type: "slug",
-      options: { source: "title" },
+      options: { source: "title", isUnique: slugIsUniquePerLanguage },
       validation: (r) => r.required(),
     }),
     defineField({
