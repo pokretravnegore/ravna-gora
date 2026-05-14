@@ -4,18 +4,27 @@ export const structure: StructureResolver = (S) =>
   S.list()
     .title("Content")
     .items([
-      // Singleton — always opens the same document
+      // Home Page — shows all language versions; the plugin adds a language tab inside
       S.listItem()
         .title("Home Page")
         .id("homePage")
         .child(
-          S.document()
+          S.documentList()
+            .title("Home Page")
             .schemaType("homePage")
-            .documentId("homePage")
+            .filter('_type == "homePage"')
+        ),
+      S.listItem()
+        .title("Current Newspaper")
+        .id("currentNewspaper")
+        .child(
+          S.document()
+            .schemaType("currentNewspaper")
+            .documentId("3701ce5b-5efb-4826-96db-c19d9c18c6ef")
         ),
       S.divider(),
-      // All other document types (events, historyPages, …)
+      // Events and History Pages — the plugin adds a language tab inside each document
       ...S.documentTypeListItems().filter(
-        (item) => item.getId() !== "homePage"
+        (item) => !["homePage", "currentNewspaper"].includes(item.getId() ?? "")
       ),
     ]);

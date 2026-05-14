@@ -1,8 +1,9 @@
-import { Navbar } from "../components/layout/Navbar";
-import { Footer } from "../components/layout/Footer";
-import { CatalogHeader } from "../components/ui/CatalogHeader";
-import { CatalogCard } from "../components/ui/CatalogCard";
-import { client } from "../../sanity/lib/client";
+import { getTranslations } from "next-intl/server";
+import { Navbar } from "../../components/layout/Navbar";
+import { Footer } from "../../components/layout/Footer";
+import { CatalogHeader } from "../../components/ui/CatalogHeader";
+import { CatalogCard } from "../../components/ui/CatalogCard";
+import { client } from "../../../sanity/lib/client";
 
 export const revalidate = 60;
 
@@ -17,18 +18,25 @@ type EventData = {
   card: { title: string; subtitle: string; pictureUrl: string };
 };
 
-async function getEvents(): Promise<EventData[]> {
+async function getEvents(locale: string): Promise<EventData[]> {
   return client.fetch(
-    `*[_type == "event" && defined(card)] | order(_createdAt desc) {
+    `*[_type == "event" && defined(card) && (language == $locale || (!defined(language) && $locale == "en"))] | order(_createdAt desc) {
       _id,
       "slug": slug.current,
       card
-    }`
+    }`,
+    { locale }
   );
 }
 
-export default async function Events() {
-  const events = await getEvents();
+export default async function Events({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const t = await getTranslations("events");
+  const events = await getEvents(locale);
 
   return (
     <div className="min-h-screen bg-offwhite-1 flex flex-col">
@@ -39,14 +47,14 @@ export default async function Events() {
 
           <CatalogHeader
             imageSrc={A.hero}
-            imageAlt="Events"
-            title="Events"
-            description="Browse our archive of past and upcoming events."
+            imageAlt={t("imageAlt")}
+            title={t("title")}
+            description={t("description")}
           />
 
           <div className="flex flex-col gap-[var(--space-9)] pb-[var(--space-8)]">
             {events.length === 0 ? (
-              <p className="type-body text-gray-2">No events published yet.</p>
+              <p className="type-body text-gray-2">{t("noEvents")}</p>
             ) : (
               <div className="grid grid-cols-1 xl:grid-cols-3 gap-x-[20px] gap-y-[var(--space-card-v)] w-full">
                 {events.map((event) => (
