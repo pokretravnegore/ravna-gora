@@ -128,7 +128,20 @@
     "description": "Pregledajte sva izdanja od 1965. godine",
     "imageAlt": "Istorijska fotografija",
     "all": "Sve",
-    "loadMore": "Prikaži više →"
+    "loadMore": "Prikaži više →",
+    "noIssues": "U arhivi još nema izdanja.",
+    "month1": "JANUAR",
+    "month2": "FEBRUAR",
+    "month3": "MART",
+    "month4": "APRIL",
+    "month5": "MAJ",
+    "month6": "JUN",
+    "month7": "JUL",
+    "month8": "AVGUST",
+    "month9": "SEPTEMBAR",
+    "month10": "OKTOBAR",
+    "month11": "NOVEMBAR",
+    "month12": "DECEMBAR"
   },
   "newspaper": {
     "backToCatalog": "← Katalog",

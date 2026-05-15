@@ -25,9 +25,10 @@ export const historyPageType = defineType({
       type: "string",
     }),
     defineField({
-      name: "pictureUrl",
-      title: "Picture URL",
-      type: "url",
+      name: "picture",
+      title: "Picture",
+      type: "image",
+      options: { hotspot: true },
       validation: (r) => r.required(),
     }),
 
@@ -92,9 +93,10 @@ export const historyPageType = defineType({
           type: "object",
           fields: [
             defineField({
-              name: "pictureUrl",
-              title: "Picture URL",
-              type: "url",
+              name: "picture",
+              title: "Picture",
+              type: "image",
+              options: { hotspot: true },
               validation: (r) => r.required(),
             }),
             defineField({
@@ -102,7 +104,7 @@ export const historyPageType = defineType({
               type: "string",
             }),
           ],
-          preview: { select: { title: "pictureUrl" }, prepare: ({ title }) => ({ title, subtitle: "Picture (Big)" }) },
+          preview: { select: { media: "picture" }, prepare: ({ media }) => ({ media, subtitle: "Picture (Big)" }) },
         }),
 
         // 5. Two pictures side-by-side
@@ -120,9 +122,10 @@ export const historyPageType = defineType({
                   type: "object",
                   fields: [
                     defineField({
-                      name: "pictureUrl",
-                      title: "Picture URL",
-                      type: "url",
+                      name: "picture",
+                      title: "Picture",
+                      type: "image",
+                      options: { hotspot: true },
                       validation: (r) => r.required(),
                     }),
                     defineField({

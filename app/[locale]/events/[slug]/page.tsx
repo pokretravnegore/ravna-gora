@@ -4,13 +4,14 @@ import { EventHero } from "../../../components/ui/EventHero";
 import { PageTitle } from "../../../components/ui/PageTitle";
 import { ContentBlocks, type ContentBlock } from "../../../components/content/ContentBlocks";
 import { client } from "../../../../sanity/lib/client";
+import { urlFor, type SanityImage } from "../../../../sanity/lib/image";
 
 export const revalidate = 60;
 
 type EventDetail = {
   title: string;
   subtitle?: string;
-  pictureUrl: string;
+  picture: SanityImage;
   content?: ContentBlock[];
 };
 
@@ -19,7 +20,7 @@ async function getEvent(slug: string, locale: string): Promise<EventDetail | nul
     `*[_type == "event" && slug.current == $slug && (language == $locale || (!defined(language) && $locale == "en"))][0] {
       title,
       subtitle,
-      pictureUrl,
+      picture,
       content
     }`,
     { slug, locale }
@@ -51,11 +52,11 @@ export default async function EventPage({
         <EventHero
           title={event.title}
           subtitle={event.subtitle}
-          pictureUrl={event.pictureUrl}
+          pictureUrl={urlFor(event.picture).width(1512).auto("format").url()}
         />
       }
     >
-      <div className="flex flex-col gap-[var(--space-8)] py-[var(--space-8)] pb-[var(--space-10)]">
+      <div className="flex flex-col gap-(--space-8) py-(--space-8) pb-(--space-10)">
         {/* Title shown on mobile/tablet only — desktop sees it in the hero */}
         <div className="xl:hidden">
           <PageTitle title={event.title} subtitle={event.subtitle} />

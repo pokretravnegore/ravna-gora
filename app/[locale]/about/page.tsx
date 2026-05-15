@@ -1,36 +1,36 @@
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { ContentPageLayout } from "../../components/layout/ContentPageLayout";
 import { SectionHeading } from "../../components/ui/SectionHeading";
 import { ParagraphView } from "../../components/ui/ParagraphView";
 import { QuoteView }     from "../../components/ui/QuoteView";
 
-// Figma MCP asset URLs — expires 7 days after generation
 const A = {
-  hero:       "https://www.figma.com/api/mcp/asset/83407c28-2c71-42c1-9311-2f1f6072512d",
-  aboutPhoto: "https://www.figma.com/api/mcp/asset/c59cfbd6-a524-433e-8cd1-99cbcc949cf9",
-  photo1:     "https://www.figma.com/api/mcp/asset/7f2986c7-1193-4b3d-9951-68c6f4be9538",
-  photo2:     "https://www.figma.com/api/mcp/asset/88a45a48-b796-4026-9e3f-244d45978439",
-  photo3:     "https://www.figma.com/api/mcp/asset/a3c7bf1d-4c9d-4517-9bff-9e0c82a4cbce",
+  hero: "/images/about-us-section-original/1512.avif",
+  // aboutPhoto: "https://www.figma.com/api/mcp/asset/c59cfbd6-a524-433e-8cd1-99cbcc949cf9",
+  // photo1:     "https://www.figma.com/api/mcp/asset/7f2986c7-1193-4b3d-9951-68c6f4be9538",
+  // photo2:     "https://www.figma.com/api/mcp/asset/88a45a48-b796-4026-9e3f-244d45978439",
+  // photo3:     "https://www.figma.com/api/mcp/asset/a3c7bf1d-4c9d-4517-9bff-9e0c82a4cbce",
 };
 
 export default async function AboutPage() {
   const t = await getTranslations("about");
 
-  function PhotoGrid() {
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-[18px]">
-        <div className="relative h-[260px] md:h-[300px] xl:h-[380px] overflow-hidden">
-          <img alt={t("photoAlt1")} src={A.photo1} className="absolute inset-0 size-full object-cover" />
-        </div>
-        <div className="relative h-[260px] md:h-[300px] xl:h-[380px] overflow-hidden">
-          <img alt={t("photoAlt2")} src={A.photo2} className="absolute inset-0 size-full object-cover" />
-        </div>
-        <div className="hidden xl:block relative h-[380px] overflow-hidden">
-          <img alt={t("photoAlt3")} src={A.photo3} className="absolute inset-0 size-full object-cover" />
-        </div>
-      </div>
-    );
-  }
+  // function PhotoGrid() {
+  //   return (
+  //     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-[18px]">
+  //       <div className="relative h-[260px] md:h-[300px] xl:h-[380px] overflow-hidden">
+  //         <img alt={t("photoAlt1")} src={A.photo1} className="absolute inset-0 size-full object-cover" />
+  //       </div>
+  //       <div className="relative h-[260px] md:h-[300px] xl:h-[380px] overflow-hidden">
+  //         <img alt={t("photoAlt2")} src={A.photo2} className="absolute inset-0 size-full object-cover" />
+  //       </div>
+  //       <div className="hidden xl:block relative h-[380px] overflow-hidden">
+  //         <img alt={t("photoAlt3")} src={A.photo3} className="absolute inset-0 size-full object-cover" />
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   const hero = (
     <section className="flex flex-col gap-[var(--space-9)]">
@@ -40,11 +40,13 @@ export default async function AboutPage() {
       </div>
 
       <div className="relative w-full h-[220px] md:h-[360px] xl:h-[507px] overflow-hidden">
-        <img
+        <Image
           alt={t("heroImageAlt")}
           src={A.hero}
-          className="absolute left-0 w-full max-w-none"
-          style={{ height: "204.22%", top: "-21.82%" }}
+          fill
+          priority
+          className="object-cover"
+          sizes="(max-width: 768px) 640px, (max-width: 1280px) 1024px, 1512px"
         />
       </div>
 
@@ -75,8 +77,8 @@ export default async function AboutPage() {
             <ParagraphView text={t("aboutMovementP4")} />
           </div>
 
-          {/* Photo + caption */}
-          <div className="flex flex-col gap-[10px]">
+          {/* Photo + caption — commented out until real images are provided */}
+          {/* <div className="flex flex-col gap-[10px]">
             <div className="relative w-full h-[320px] md:h-[480px] overflow-hidden">
               <img
                 alt={t("photoAlt")}
@@ -88,7 +90,7 @@ export default async function AboutPage() {
               <p className="type-body text-black">{t("photoCaption")}</p>
               <p className="type-caption text-gray-2">{t("photoArchive")}</p>
             </div>
-          </div>
+          </div> */}
         </section>
 
         {/* ── Origins ── */}
@@ -100,7 +102,7 @@ export default async function AboutPage() {
             <ParagraphView text={t("originsP2")} />
           </div>
 
-          <PhotoGrid />
+          {/* <PhotoGrid /> */}
         </section>
 
         {/* ── The Newspaper's Role ── */}
@@ -124,7 +126,7 @@ export default async function AboutPage() {
             <ParagraphView text={t("todayP2")} />
           </div>
 
-          <PhotoGrid />
+          {/* <PhotoGrid /> */}
 
           <div className="flex flex-col gap-[var(--space-text-p)]">
             <ParagraphView text={t("todayP3")} />

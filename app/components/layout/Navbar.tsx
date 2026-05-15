@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useLocale } from "next-intl";
 import { Link, useRouter, usePathname } from "../../../i18n/navigation";
-import { LogoBlack } from "./Logo";
 
 type Locale = "en" | "sr-cyrl" | "sr-latn";
 
@@ -85,7 +84,7 @@ export function Navbar() {
       <nav className="sticky top-0 z-50 bg-offwhite-1 border-b border-blue-2 w-full">
         <div className="max-w-[1512px] mx-auto px-4 md:px-6 xl:px-10 flex items-center justify-between pb-5 pt-1">
           <Link href="/" onClick={() => setMenuOpen(false)}>
-            <LogoBlack />
+            <img src="/logo-black.svg" alt="Ravna Gora" className="h-17.5 md:h-21.5 xl:h-25.25 w-auto" />
           </Link>
 
           <div className="flex items-center">
@@ -133,7 +132,7 @@ export function Navbar() {
           <div className="bg-offwhite-1 border-b border-blue-2 shrink-0">
             <div className="max-w-[1512px] mx-auto px-4 md:px-6 flex items-center justify-between pb-5 pt-1">
               <Link href="/" onClick={() => setMenuOpen(false)}>
-                <LogoBlack />
+                <img src="/logo-black.svg" alt="Ravna Gora" className="h-17.5 md:h-21.5 xl:h-25.25 w-auto" />
               </Link>
               <button
                 onClick={() => setMenuOpen(false)}

@@ -1,8 +1,5 @@
-/**
- * Full-width hero image with consistent overflow cropping.
- * Use `heightClass` to override the default responsive height when the
- * design calls for a taller or shorter crop (e.g. inside content blocks).
- */
+import Image from "next/image";
+
 export function HeroImage({
   src,
   alt,
@@ -14,10 +11,13 @@ export function HeroImage({
 }) {
   return (
     <div className={`relative w-full overflow-hidden ${heightClass}`}>
-      <img
+      <Image
         alt={alt}
         src={src}
-        className="absolute inset-0 size-full object-cover"
+        fill
+        priority
+        className="object-cover"
+        sizes="(max-width: 768px) 640px, (max-width: 1280px) 1024px, 1512px"
       />
     </div>
   );
