@@ -90,7 +90,7 @@ export function Navbar() {
           <div className="flex items-center">
             {/* Desktop: nav links + Login + language switcher in one row with vertical dividers */}
             <div className="hidden xl:flex items-center">
-              {[...NAV_LINKS, { labelKey: "login" as const, href: "#" }].map(({ labelKey, href }, i) => (
+              {[...NAV_LINKS, { labelKey: "login" as const, href: "/login" }].map(({ labelKey, href }, i) => (
                 <div key={labelKey} className="flex items-center">
                   {i > 0 && <div className="w-px h-[18px] bg-black mx-[var(--space-3)]" />}
                   <Link href={href} className="type-ui-medium font-bold text-black whitespace-nowrap hover:underline">
