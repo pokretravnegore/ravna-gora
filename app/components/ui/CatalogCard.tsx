@@ -22,7 +22,7 @@ export function CatalogCard({
         />
       </div>
       <div className="flex flex-col gap-1">
-        <p className="type-large text-blue-2">{subtitle}</p>
+        <p className="type-large text-black">{subtitle}</p>
         <p className="type-h3 text-black group-hover:underline">{title}</p>
       </div>
     </article>

@@ -60,7 +60,7 @@ export function Navbar() {
     { labelKey: "aboutUs" as const, href: "/about" },
     { labelKey: "events" as const, href: "/events" },
     { labelKey: "newspaper" as const, href: "/newspaper-catalog" },
-    { labelKey: "membership" as const, href: "#" },
+    { labelKey: "membership" as const, href: "/membership" },
   ];
 
   const EXPLORE_LINKS = [

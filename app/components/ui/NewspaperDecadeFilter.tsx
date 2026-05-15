@@ -106,7 +106,7 @@ export function NewspaperDecadeFilter({ issues, noIssuesLabel }: { issues: NewsI
             {hasMore && (
               <button
                 onClick={() => setVisibleCount((c) => c + 9)}
-                className="type-h4 text-black text-center w-full"
+                className="type-h4 text-black text-center w-full hover:underline cursor-pointer"
               >
                 {t("loadMore")}
               </button>
