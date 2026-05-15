@@ -27,6 +27,34 @@ async function getEvent(slug: string, locale: string): Promise<EventDetail | nul
   );
 }
 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; slug: string }>;
+}) {
+  const { locale, slug } = await params;
+  const event = await getEvent(slug, locale);
+  if (!event) return {};
+
+  const imageUrl = urlFor(event.picture).width(1200).height(630).fit("crop").auto("format").url();
+
+  return {
+    title: event.title,
+    description: event.subtitle,
+    openGraph: {
+      title: event.title,
+      description: event.subtitle ?? undefined,
+      images: [{ url: imageUrl, width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: "summary_large_image" as const,
+      title: event.title,
+      description: event.subtitle ?? undefined,
+      images: [imageUrl],
+    },
+  };
+}
+
 export async function generateStaticParams() {
   // Slugs are shared across languages — return unique slugs from the base (English) documents
   const slugs: { slug: string }[] = await client.fetch(
