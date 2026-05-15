@@ -18,6 +18,7 @@ export function CatalogCard({
         <img
           alt={title}
           src={pictureUrl}
+          loading="lazy"
           className="absolute inset-0 size-full object-cover"
         />
       </div>

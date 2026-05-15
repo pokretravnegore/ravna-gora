@@ -2,8 +2,9 @@ import { getTranslations } from "next-intl/server";
 import { Navbar } from "../../components/layout/Navbar";
 import { Footer } from "../../components/layout/Footer";
 import { CatalogHeader } from "../../components/ui/CatalogHeader";
-import { CatalogCard }   from "../../components/ui/CatalogCard";
+import { NewspaperDecadeFilter } from "../../components/ui/NewspaperDecadeFilter";
 import { client } from "../../../sanity/lib/client";
+import type { NewsIssue } from "../../components/ui/NewspaperDecadeFilter";
 
 // Figma MCP asset URLs — expires 7 days after generation
 const A = {
@@ -12,24 +13,7 @@ const A = {
 
 export const revalidate = 60;
 
-const MONTHS = [
-  "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
-  "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER",
-];
-
-function formatIssueDate(isoDate: string): string {
-  const [year, month] = isoDate.split("-");
-  return `${MONTHS[parseInt(month, 10) - 1]} ${year}`;
-}
-
-type Issue = {
-  number: number;
-  date: string;
-  imageUrl: string;
-  slug: string;
-};
-
-async function getIssues(): Promise<Issue[]> {
+async function getIssues(): Promise<NewsIssue[]> {
   return client.fetch(
     `*[_type == "newspaperIssue"] | order(issueDate desc) {
       "number": issueNumber,
@@ -60,25 +44,7 @@ export default async function NewspaperCatalog() {
             description={t("description")}
           />
 
-          <div className="flex flex-col gap-[var(--space-9)] pb-[var(--space-8)]">
-            {issues.length === 0 ? (
-              <p className="type-body text-gray-1 text-center py-(--space-8)">
-                {t("noIssues")}
-              </p>
-            ) : (
-              <div className="grid grid-cols-1 xl:grid-cols-3 gap-x-5 gap-y-(--space-card-v) w-full">
-                {issues.map((issue) => (
-                  <CatalogCard
-                    key={issue.slug}
-                    subtitle={`#${issue.number}`}
-                    title={formatIssueDate(issue.date)}
-                    pictureUrl={issue.imageUrl}
-                    href={`/newspaper/${issue.slug}`}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
+          <NewspaperDecadeFilter issues={issues} noIssuesLabel={t("noIssues")} />
 
         </div>
       </main>
