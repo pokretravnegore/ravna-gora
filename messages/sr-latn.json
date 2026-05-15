@@ -128,7 +128,8 @@
     "description": "Pregledajte sva izdanja od 1965. godine",
     "imageAlt": "Istorijska fotografija",
     "all": "Sve",
-    "loadMore": "Prikaži više →"
+    "loadMore": "Prikaži više →",
+    "noIssues": "U arhivi još nema izdanja."
   },
   "newspaper": {
     "backToCatalog": "← Katalog",

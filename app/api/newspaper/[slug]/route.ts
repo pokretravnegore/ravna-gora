@@ -17,16 +17,27 @@ export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
 ) {
-  await params;
+  const { slug } = await params;
 
-  const data = await serverClient.fetch<{ pdfUrl: string } | null>(
-    `*[_type == "currentNewspaper"][0] {
+  // Try the archive first
+  const issue = await serverClient.fetch<{ pdfUrl: string } | null>(
+    `*[_type == "newspaperIssue" && slug.current == $slug][0] {
       "pdfUrl": pdfFile.asset->url
-    }`
+    }`,
+    { slug }
   );
 
-  if (data?.pdfUrl) {
-    return NextResponse.redirect(data.pdfUrl);
+  if (issue?.pdfUrl) {
+    return NextResponse.redirect(issue.pdfUrl);
+  }
+
+  // Fall back to the current-newspaper singleton (legacy / dev)
+  const current = await serverClient.fetch<{ pdfUrl: string } | null>(
+    `*[_type == "currentNewspaper"][0] { "pdfUrl": pdfFile.asset->url }`
+  );
+
+  if (current?.pdfUrl) {
+    return NextResponse.redirect(current.pdfUrl);
   }
 
   // Fall back to local file while CMS document is not yet published

@@ -3,71 +3,81 @@ import { Navbar } from "../../components/layout/Navbar";
 import { Footer } from "../../components/layout/Footer";
 import { CatalogHeader } from "../../components/ui/CatalogHeader";
 import { CatalogCard }   from "../../components/ui/CatalogCard";
+import { client } from "../../../sanity/lib/client";
 
 // Figma MCP asset URLs — expires 7 days after generation
 const A = {
-  hero:       "https://www.figma.com/api/mcp/asset/2680efc6-31d7-4801-875d-84373d1f8081",
-  issueCover: "https://www.figma.com/api/mcp/asset/a808d36b-dc83-418d-b3dc-6df3bd249bb3",
+  hero: "https://www.figma.com/api/mcp/asset/2680efc6-31d7-4801-875d-84373d1f8081",
 };
 
-const DECADES = ["1960s", "1970s", "1980s", "1990s", "2000s", "2010s", "2020s"];
+export const revalidate = 60;
 
-// Dummy data — will be replaced by CMS feed
-type Issue = { number: string; date: string; coverImage: string };
-
-const ISSUES: Issue[] = [
-  { number: "#760", date: "NOVEMBER 2025", coverImage: A.issueCover },
-  { number: "#761", date: "DECEMBER 2025", coverImage: A.issueCover },
-  { number: "#762", date: "JANUARY 2026",  coverImage: A.issueCover },
-  { number: "#763", date: "FEBRUARY 2026", coverImage: A.issueCover },
-  { number: "#764", date: "MARCH 2026",    coverImage: A.issueCover },
+const MONTHS = [
+  "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
+  "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER",
 ];
 
+function formatIssueDate(isoDate: string): string {
+  const [year, month] = isoDate.split("-");
+  return `${MONTHS[parseInt(month, 10) - 1]} ${year}`;
+}
+
+type Issue = {
+  number: number;
+  date: string;
+  imageUrl: string;
+  slug: string;
+};
+
+async function getIssues(): Promise<Issue[]> {
+  return client.fetch(
+    `*[_type == "newspaperIssue"] | order(issueDate desc) {
+      "number": issueNumber,
+      "date": issueDate,
+      "imageUrl": imageUrl,
+      "slug": slug.current
+    }`
+  );
+}
+
 export default async function NewspaperCatalog() {
-  const t = await getTranslations("newspaperCatalog");
+  const [t, issues] = await Promise.all([
+    getTranslations("newspaperCatalog"),
+    getIssues(),
+  ]);
 
   return (
     <div className="min-h-screen bg-offwhite-1 flex flex-col">
       <Navbar />
 
       <main className="flex-1">
-        <div className="max-w-[1512px] mx-auto px-4 md:px-6 xl:px-10 pt-[var(--space-8)] flex flex-col gap-[var(--space-8)]">
+        <div className="max-w-378 mx-auto px-4 md:px-6 xl:px-10 pt-(--space-8) flex flex-col gap-(--space-8)">
 
           <CatalogHeader
             imageSrc={A.hero}
             imageAlt={t("imageAlt")}
             title={t("title")}
             description={t("description")}
-          >
-            {/* Decade filter bar — horizontally scrollable */}
-            <div className="flex items-center gap-[var(--space-list-h)] overflow-x-auto pb-1">
-              <button className="bg-black text-white type-large whitespace-nowrap shrink-0 px-[var(--btn-big-h)] py-[var(--btn-big-v)]">
-                {t("all")}
-              </button>
-              {DECADES.map((decade) => (
-                <button
-                  key={decade}
-                  className="border border-black text-black type-large whitespace-nowrap shrink-0 px-[var(--btn-h)] py-[var(--btn-v)]"
-                >
-                  {decade}
-                </button>
-              ))}
-            </div>
-          </CatalogHeader>
+          />
 
           <div className="flex flex-col gap-[var(--space-9)] pb-[var(--space-8)]">
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-x-[20px] gap-y-[var(--space-card-v)] w-full">
-              {ISSUES.map((issue) => (
-                <CatalogCard
-                  key={issue.number}
-                  subtitle={issue.number}
-                  title={issue.date}
-                  pictureUrl={issue.coverImage}
-                />
-              ))}
-            </div>
-
-            <p className="type-h4 text-black text-center">{t("loadMore")}</p>
+            {issues.length === 0 ? (
+              <p className="type-body text-gray-1 text-center py-(--space-8)">
+                {t("noIssues")}
+              </p>
+            ) : (
+              <div className="grid grid-cols-1 xl:grid-cols-3 gap-x-5 gap-y-(--space-card-v) w-full">
+                {issues.map((issue) => (
+                  <CatalogCard
+                    key={issue.slug}
+                    subtitle={`#${issue.number}`}
+                    title={formatIssueDate(issue.date)}
+                    pictureUrl={issue.imageUrl}
+                    href={`/newspaper/${issue.slug}`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
 
         </div>
