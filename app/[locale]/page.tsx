@@ -1,9 +1,9 @@
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { Link } from "../../i18n/navigation";
 import { Navbar } from "../components/layout/Navbar";
 import { Footer } from "../components/layout/Footer";
 import { SectionHeading } from "../components/ui/SectionHeading";
-import { ICONS } from "../components/assets";
 import { client } from "../../sanity/lib/client";
 
 export const revalidate = 60;
@@ -11,24 +11,21 @@ export const revalidate = 60;
 // Figma MCP asset URLs — expires 7 days after generation
 // FIXME: images and excerpts in histArticles are static placeholders — replace with CMS data when history pages are authored
 const A = {
-  arrowLg: ICONS.arrowLg,
-  arrowSm: ICONS.arrowSm,
-  hero:     "https://www.figma.com/api/mcp/asset/f8726c09-f189-4d8c-89d3-ea3631839b0d",
-  magazine: "https://www.figma.com/api/mcp/asset/bbdd735f-5579-40d2-b45d-348bef1c4ede",
-  about:    "https://www.figma.com/api/mcp/asset/bea1d0ed-cac3-47c3-91b7-b6ae259519a1",
-  hist1:    "https://www.figma.com/api/mcp/asset/5ac6e05d-d541-4908-8d31-373a1885e9e1",
-  hist2:    "https://www.figma.com/api/mcp/asset/752ba48a-15c5-46e5-b850-7351736ec531",
-  hist3:    "https://www.figma.com/api/mcp/asset/3ed95168-eb43-4ae9-a642-aef90f7e171f",
-  hist4:    "https://www.figma.com/api/mcp/asset/dc5600b8-975b-4700-831d-ea38515bb9b5",
-  hist5:    "https://www.figma.com/api/mcp/asset/3f3aa435-ab67-45db-93f0-2751c8cc5ff1",
+  hero:     "/images/landing-hero-original/1512.avif",
+  magazine: "/images/preview-next-newspaper/464.avif",
+  about:    "/images/about-us-section-original/1512.avif",
+  hist1:    "/images/history-page-1-original/400.avif",
+  hist2:    "/images/history-page-2-original/544.avif",
+  hist3:    "/images/history-page-3-original/500.avif",
+  hist4:    "/images/history-page-4-original/1024.avif",
+  hist5:    "/images/history-page-5-original/1024.avif",
 };
 
 type Chapter = { name: string; websiteUrl?: string };
-type LatestIssue = { coverUrl: string; date: string; number: string };
+type LatestIssue = { date: string; number: string };
 type HomePageData = {
   pageTitle: string;
   pageSubtitle: string;
-  heroImageUrl: string;
   latestIssue: LatestIssue | null;
   chapters: Chapter[];
 };
@@ -63,7 +60,6 @@ export default async function Home({
     `*[_type == "homePage" && (language == $locale || (!defined(language) && $locale == "en"))][0] {
       pageTitle,
       pageSubtitle,
-      heroImageUrl,
       latestIssue,
       chapters
     }`,
@@ -72,8 +68,7 @@ export default async function Home({
 
   const pageTitle    = homePage?.pageTitle    ?? t("fallbackTitle");
   const pageSubtitle = homePage?.pageSubtitle ?? t("fallbackSubtitle");
-  const heroImageUrl = homePage?.heroImageUrl ?? A.hero;
-  const latestIssue  = homePage?.latestIssue  ?? { coverUrl: A.magazine, date: "March 2026", number: "#764" };
+  const latestIssue  = homePage?.latestIssue  ?? { date: "March 2026", number: "#764" };
   const chapters     = homePage?.chapters?.length ? homePage.chapters : FALLBACK_CHAPTERS;
 
   const histArticles = (["1", "2", "3", "4", "5"] as const).map((n, i) => ({
@@ -100,11 +95,13 @@ export default async function Home({
             </div>
 
             <div className="w-full h-[220px] md:h-[360px] xl:h-[507px] overflow-hidden relative">
-              <img
+              <Image
                 alt={t("heroImageAlt")}
-                src={heroImageUrl}
-                className="absolute left-0 w-full max-w-none"
-                style={{ height: "204.22%", top: "-21.82%" }}
+                src={A.hero}
+                fill
+                priority
+                className="object-cover"
+                sizes="(max-width: 768px) 640px, (max-width: 1280px) 1024px, 1512px"
               />
             </div>
           </section>
@@ -125,19 +122,16 @@ export default async function Home({
                 <div className="relative h-[300px] md:h-[360px] xl:h-[420px] overflow-hidden">
                   <img
                     alt={t("latestIssueAlt")}
-                    src={latestIssue.coverUrl}
+                    src={A.magazine}
                     className="absolute inset-0 size-full object-cover"
                   />
                   <div className="absolute inset-0 bg-black/40" />
                 </div>
 
                 <div className="flex flex-col gap-[var(--space-3)]">
-                  <div className="flex items-center justify-between">
-                    <div className="flex flex-col gap-[4px] flex-1 min-w-0">
-                      <p className="type-large text-black">{latestIssue.date}</p>
-                      <h3 className="type-h3 text-black">{t("latestIssueHeading", { number: latestIssue.number })}</h3>
-                    </div>
-                    <img alt={t("openIssueAlt")} src={A.arrowLg} className="size-[45px] shrink-0 ml-2" />
+                  <div className="flex flex-col gap-[4px]">
+                    <p className="type-large text-black">{latestIssue.date}</p>
+                    <h3 className="type-h3 text-black">{t("latestIssueHeading", { number: latestIssue.number })}</h3>
                   </div>
 
                   <p className="type-body text-black">{t("latestIssueDesc")}</p>
@@ -162,10 +156,12 @@ export default async function Home({
 
               <div className="flex flex-col gap-[10px] w-full xl:w-[716px] p-[10px]">
                 <div className="relative h-[280px] md:h-[380px] xl:h-[489px] w-full">
-                  <img
+                  <Image
                     alt="Historical photograph"
                     src={A.about}
-                    className="absolute inset-0 size-full object-cover"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 640px, (max-width: 1280px) 1024px, 716px"
                   />
                 </div>
                 <div className="flex flex-col">
@@ -184,24 +180,19 @@ export default async function Home({
                   <Link key={part} href={href}>
                     <article className="flex flex-col gap-[var(--space-text-p)]">
                       <div className="relative h-[260px] md:h-[320px] xl:h-[421px] overflow-hidden">
-                        <img
+                        <Image
                           alt={title}
                           src={img}
-                          className="absolute inset-0 size-full object-cover"
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
                         />
                       </div>
 
                       <div className="flex flex-col gap-[var(--space-text-p)]">
-                        <div className="flex items-start justify-between">
-                          <div className="flex flex-col gap-[4px] flex-1 min-w-0">
-                            <p className="type-large text-black">{part}</p>
-                            <h3 className="type-h3 text-black">{title}</h3>
-                          </div>
-                          <img
-                            alt={t("openArticleAlt")}
-                            src={A.arrowLg}
-                            className="size-[45px] shrink-0 ml-2 mt-1"
-                          />
+                        <div className="flex flex-col gap-1">
+                          <p className="type-large text-black">{part}</p>
+                          <h3 className="type-h3 text-black">{title}</h3>
                         </div>
 
                         <p className="type-body text-black line-clamp-3">{excerpt}</p>
@@ -224,9 +215,8 @@ export default async function Home({
                       <div className="flex items-center justify-between">
                         <p className="type-h2 text-black">{name}</p>
                         {websiteUrl && (
-                          <a href={websiteUrl} className="flex items-center gap-[var(--space-2)]">
-                            <p className="type-body text-black">{t("visit")}</p>
-                            <img alt={t("visitAlt")} src={A.arrowSm} className="size-[23px]" />
+                          <a href={websiteUrl} className="type-body text-black">
+                            {t("visit")}
                           </a>
                         )}
                       </div>

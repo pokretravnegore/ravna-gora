@@ -18,23 +18,10 @@ export const homePageType = defineType({
       validation: (r) => r.required(),
     }),
     defineField({
-      name: "heroImageUrl",
-      title: "Hero Image URL",
-      type: "url",
-      validation: (r) => r.required(),
-    }),
-
-    defineField({
       name: "latestIssue",
       title: "Latest Newspaper Issue",
       type: "object",
       fields: [
-        defineField({
-          name: "coverUrl",
-          title: "Cover Image URL",
-          type: "url",
-          validation: (r) => r.required(),
-        }),
         defineField({
           name: "date",
           title: "Date",

@@ -1,5 +1,4 @@
 import { Link } from "../../../i18n/navigation";
-import { ICONS } from "../assets";
 
 export function CatalogCard({
   title,
@@ -22,12 +21,9 @@ export function CatalogCard({
           className="absolute inset-0 size-full object-cover"
         />
       </div>
-      <div className="flex items-center justify-between">
-        <div className="flex flex-col gap-[4px] flex-1 min-w-0">
-          <p className="type-large text-blue-2">{subtitle}</p>
-          <p className="type-h3 text-black">{title}</p>
-        </div>
-        <img alt="" src={ICONS.arrowLg} className="size-[45px] shrink-0 ml-2" />
+      <div className="flex flex-col gap-1">
+        <p className="type-large text-blue-2">{subtitle}</p>
+        <p className="type-h3 text-black">{title}</p>
       </div>
     </article>
   );

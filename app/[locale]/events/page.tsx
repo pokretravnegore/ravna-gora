@@ -7,9 +7,8 @@ import { client } from "../../../sanity/lib/client";
 
 export const revalidate = 60;
 
-// Figma MCP asset URLs — expires 7 days after generation
 const A = {
-  hero: "https://www.figma.com/api/mcp/asset/43e5eb86-74a4-4930-9dc3-c44a94385265",
+  hero: "/images/events-original/1512.avif",
 };
 
 type EventData = {

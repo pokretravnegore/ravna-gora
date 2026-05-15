@@ -1,7 +1,5 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "../../../i18n/navigation";
-import { LogoWhite } from "./Logo";
-import { ICONS } from "../assets";
 
 // FIXME: keep in sync with Navbar.tsx HISTORY_LINKS — slug for Part 1 not yet confirmed
 const EXPLORE_HREFS = ["/about", "/events", "/newspaper-catalog", "/"];
@@ -64,7 +62,10 @@ export async function Footer() {
           <div className="flex flex-col gap-[var(--space-5)]">
             <p className="type-h4 text-white">{t("contactInfo")}</p>
             <div className="flex items-center gap-[var(--space-2)]">
-              <img alt="Email" src={ICONS.mail} className="size-[24px] shrink-0" />
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="shrink-0">
+                <rect x="2" y="4" width="20" height="16" rx="2" />
+                <polyline points="2,4 12,13 22,4" />
+              </svg>
               <p className="type-body text-white">contact@ravnagorachetniks.org</p>
             </div>
           </div>
@@ -75,13 +76,7 @@ export async function Footer() {
           <div className="w-full h-px bg-white/30" />
 
           <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-[var(--space-5)]">
-            <div className="flex items-start gap-[var(--space-4)]">
-              <LogoWhite />
-              <div className="flex flex-col text-white">
-                <p className="type-caption">{t("chapter")}</p>
-                <p className="type-h4">{t("orgName")}</p>
-              </div>
-            </div>
+            <img src="/logo-text-white.svg" alt="Ravna Gora" className="h-15 md:h-19 xl:h-23 w-auto" />
 
             <div className="flex flex-col gap-[var(--space-1)] type-base text-white">
               <p>1350 Woodview Drive</p>

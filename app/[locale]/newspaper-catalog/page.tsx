@@ -8,7 +8,7 @@ import type { NewsIssue } from "../../components/ui/NewspaperDecadeFilter";
 
 // Figma MCP asset URLs — expires 7 days after generation
 const A = {
-  hero: "https://www.figma.com/api/mcp/asset/2680efc6-31d7-4801-875d-84373d1f8081",
+  hero: "/images/landing-hero-original/1512.avif",
 };
 
 export const revalidate = 60;
