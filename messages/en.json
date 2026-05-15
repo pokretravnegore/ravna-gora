@@ -129,7 +129,19 @@
     "imageAlt": "Historical photograph",
     "all": "All",
     "loadMore": "Load More →",
-    "noIssues": "No issues in the archive yet."
+    "noIssues": "No issues in the archive yet.",
+    "month1": "JANUARY",
+    "month2": "FEBRUARY",
+    "month3": "MARCH",
+    "month4": "APRIL",
+    "month5": "MAY",
+    "month6": "JUNE",
+    "month7": "JULY",
+    "month8": "AUGUST",
+    "month9": "SEPTEMBER",
+    "month10": "OCTOBER",
+    "month11": "NOVEMBER",
+    "month12": "DECEMBER"
   },
   "newspaper": {
     "backToCatalog": "← Catalog",

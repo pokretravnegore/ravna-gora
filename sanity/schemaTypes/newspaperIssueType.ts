@@ -18,9 +18,10 @@ export const newspaperIssueType = defineType({
       validation: (r) => r.required(),
     }),
     defineField({
-      name: "imageUrl",
-      title: "Cover Image URL",
-      type: "url",
+      name: "image",
+      title: "Cover Image",
+      type: "image",
+      options: { hotspot: true },
       validation: (r) => r.required(),
     }),
     defineField({

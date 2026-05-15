@@ -1,11 +1,6 @@
+import Image from "next/image";
 import { HeroImage } from "./HeroImage";
 
-/**
- * Hero for event detail pages.
- * Mobile/tablet: full-width image (standard HeroImage).
- * Desktop: full viewport height, split 50/50 — centred title+subtitle on the
- * left, cover image on the right.
- */
 export function EventHero({
   title,
   subtitle,
@@ -34,10 +29,13 @@ export function EventHero({
 
         {/* Right — cover image */}
         <div className="w-1/2 relative overflow-hidden">
-          <img
+          <Image
             alt={title}
             src={pictureUrl}
-            className="absolute inset-0 size-full object-cover"
+            fill
+            priority
+            className="object-cover"
+            sizes="50vw"
           />
         </div>
       </div>

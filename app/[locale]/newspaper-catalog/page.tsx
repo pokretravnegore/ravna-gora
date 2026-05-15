@@ -4,24 +4,32 @@ import { Footer } from "../../components/layout/Footer";
 import { CatalogHeader } from "../../components/ui/CatalogHeader";
 import { NewspaperDecadeFilter } from "../../components/ui/NewspaperDecadeFilter";
 import { client } from "../../../sanity/lib/client";
+import { urlFor, type SanityImage } from "../../../sanity/lib/image";
 import type { NewsIssue } from "../../components/ui/NewspaperDecadeFilter";
 
-// Figma MCP asset URLs — expires 7 days after generation
 const A = {
   hero: "/images/landing-hero-original/1512.avif",
 };
 
 export const revalidate = 60;
 
+type RawIssue = { number: number; date: string; image: SanityImage; slug: string };
+
 async function getIssues(): Promise<NewsIssue[]> {
-  return client.fetch(
+  const raw: RawIssue[] = await client.fetch(
     `*[_type == "newspaperIssue"] | order(issueDate desc) {
       "number": issueNumber,
       "date": issueDate,
-      "imageUrl": imageUrl,
+      image,
       "slug": slug.current
     }`
   );
+  return raw.map((r) => ({
+    number: r.number,
+    date: r.date,
+    imageUrl: urlFor(r.image).width(700).auto("format").url(),
+    slug: r.slug,
+  }));
 }
 
 export default async function NewspaperCatalog() {

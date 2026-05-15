@@ -4,6 +4,7 @@ import { Footer } from "../../components/layout/Footer";
 import { CatalogHeader } from "../../components/ui/CatalogHeader";
 import { CatalogCard } from "../../components/ui/CatalogCard";
 import { client } from "../../../sanity/lib/client";
+import { urlFor, type SanityImage } from "../../../sanity/lib/image";
 
 export const revalidate = 60;
 
@@ -11,18 +12,15 @@ const A = {
   hero: "/images/events-original/1512.avif",
 };
 
-type EventData = {
-  _id: string;
-  slug: string;
-  card: { title: string; subtitle: string; pictureUrl: string };
-};
+type EventCard = { title: string; subtitle: string; picture: SanityImage };
+type EventData = { _id: string; slug: string; card: EventCard };
 
 async function getEvents(locale: string): Promise<EventData[]> {
   return client.fetch(
     `*[_type == "event" && defined(card) && (language == $locale || (!defined(language) && $locale == "en"))] | order(_createdAt desc) {
       _id,
       "slug": slug.current,
-      card
+      card { title, subtitle, picture }
     }`,
     { locale }
   );
@@ -62,7 +60,7 @@ export default async function Events({
                     href={`/events/${event.slug}`}
                     title={event.card.title}
                     subtitle={event.card.subtitle}
-                    pictureUrl={event.card.pictureUrl}
+                    pictureUrl={urlFor(event.card.picture).width(700).auto("format").url()}
                   />
                 ))}
               </div>

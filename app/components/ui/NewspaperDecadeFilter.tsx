@@ -4,16 +4,11 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { CatalogCard } from "./CatalogCard";
 
-const DECADES = ["1960s", "1970s", "1980s", "1990s", "2000s", "2010s", "2020s"];
+const DECADES = ["1950s", "1960s", "1970s", "1980s", "1990s", "2000s", "2010s", "2020s"];
 
-const MONTHS = [
-  "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
-  "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER",
-];
-
-function formatIssueDate(isoDate: string): string {
+function formatIssueDate(isoDate: string, months: string[]): string {
   const [year, month] = isoDate.split("-");
-  return `${MONTHS[parseInt(month, 10) - 1]} ${year}`;
+  return `${months[parseInt(month, 10) - 1]} ${year}`;
 }
 
 function issueDecade(isoDate: string): string {
@@ -30,9 +25,14 @@ export type NewsIssue = {
 
 export function NewspaperDecadeFilter({ issues, noIssuesLabel }: { issues: NewsIssue[]; noIssuesLabel: string }) {
   const t = useTranslations("newspaperCatalog");
+  const months = [
+    t("month1"), t("month2"), t("month3"), t("month4"),
+    t("month5"), t("month6"), t("month7"), t("month8"),
+    t("month9"), t("month10"), t("month11"), t("month12"),
+  ];
   // Empty set = "All" selected
   const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [visibleCount, setVisibleCount] = useState(10);
+  const [visibleCount, setVisibleCount] = useState(9);
 
   const isAll = selected.size === 0;
 
@@ -46,12 +46,12 @@ export function NewspaperDecadeFilter({ issues, noIssuesLabel }: { issues: NewsI
       }
       return next;
     });
-    setVisibleCount(10);
+    setVisibleCount(9);
   }
 
   function selectAll() {
     setSelected(new Set());
-    setVisibleCount(10);
+    setVisibleCount(9);
   }
 
   const filtered = isAll
@@ -97,7 +97,7 @@ export function NewspaperDecadeFilter({ issues, noIssuesLabel }: { issues: NewsI
                 <CatalogCard
                   key={issue.slug}
                   subtitle={`#${issue.number}`}
-                  title={formatIssueDate(issue.date)}
+                  title={formatIssueDate(issue.date, months)}
                   pictureUrl={issue.imageUrl}
                   href={`/newspaper/${issue.slug}`}
                 />
@@ -105,7 +105,7 @@ export function NewspaperDecadeFilter({ issues, noIssuesLabel }: { issues: NewsI
             </div>
             {hasMore && (
               <button
-                onClick={() => setVisibleCount((c) => c + 10)}
+                onClick={() => setVisibleCount((c) => c + 9)}
                 className="type-h4 text-black text-center w-full"
               >
                 {t("loadMore")}
