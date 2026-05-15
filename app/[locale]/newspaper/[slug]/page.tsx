@@ -25,6 +25,7 @@ export default function NewspaperViewer() {
   const pagesRef = useRef<Map<number, HTMLCanvasElement>>(new Map());
   const scaleRef = useRef(scale);
   scaleRef.current = scale;
+  const cancelledRef = useRef(false);
 
   const renderPage = useCallback(
     async (pdf: PDFDocumentProxy, pageNum: number, s: number) => {
@@ -61,6 +62,7 @@ export default function NewspaperViewer() {
   );
 
   const loadPdf = useCallback(async () => {
+    cancelledRef.current = false;
     setLoading(true);
     setError(false);
     pagesRef.current.clear();
@@ -75,17 +77,34 @@ export default function NewspaperViewer() {
         .getDocument(`/api/newspaper/${slug}`)
         .promise;
 
+      if (cancelledRef.current) return;
+
       pdfRef.current = pdf;
       setNumPages(pdf.numPages);
       setCurrentPage(1);
+
+      // Calculate fit-width scale before rendering so pages aren't drawn twice
+      const container = containerRef.current;
+      if (container) {
+        const firstPage = await pdf.getPage(1);
+        if (cancelledRef.current) return;
+        const vp = firstPage.getViewport({ scale: 1 });
+        const fitScale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, (container.clientWidth - 48) / vp.width));
+        setScale(fitScale);
+        scaleRef.current = fitScale;
+      }
+
       setLoading(false);
 
       for (let i = 1; i <= pdf.numPages; i++) {
+        if (cancelledRef.current) break;
         await renderPage(pdf, i, scaleRef.current);
       }
     } catch {
-      setError(true);
-      setLoading(false);
+      if (!cancelledRef.current) {
+        setError(true);
+        setLoading(false);
+      }
     }
   }, [slug, renderPage]);
 
@@ -103,6 +122,7 @@ export default function NewspaperViewer() {
 
   useEffect(() => {
     loadPdf();
+    return () => { cancelledRef.current = true; };
   }, [loadPdf]);
 
   // Detect current page from scroll
@@ -183,25 +203,29 @@ export default function NewspaperViewer() {
     <div className="flex flex-col h-screen w-screen bg-[#1a1a1a] text-[#e5e5e5] overflow-hidden">
 
       {/* Toolbar */}
-      <div className="shrink-0 flex items-center gap-2 px-4 h-12 bg-[#262626] border-b border-[#333]">
+      <div className="shrink-0 flex items-center gap-1 md:gap-2 px-2 md:px-4 h-12 bg-[#262626] border-b border-[#333]">
+        {/* Back */}
         <Link
           href="/newspaper-catalog"
-          className="text-sm text-[#888] hover:text-[#e5e5e5] transition-colors mr-2 whitespace-nowrap"
+          className="text-sm text-[#888] hover:text-[#e5e5e5] transition-colors mr-1 md:mr-2 shrink-0"
         >
-          {t("backToCatalog")}
+          <svg className="md:hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+          <span className="hidden md:inline whitespace-nowrap">{t("backToCatalog")}</span>
         </Link>
 
         <div className="w-px h-5 bg-[#333] shrink-0" />
 
+        {/* Page navigation */}
         <button
           onClick={() => goToPage(currentPage - 1)}
           disabled={currentPage <= 1 || numPages === 0}
-          className="px-3 py-1 text-sm rounded border border-transparent hover:bg-[#333] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          className="px-2 md:px-3 py-1 text-sm rounded border border-transparent hover:bg-[#333] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
-          {t("prev")}
+          <span className="md:hidden">‹</span>
+          <span className="hidden md:inline">{t("prev")}</span>
         </button>
 
-        <div className="flex items-center gap-1 text-sm text-[#888] min-w-[90px] justify-center">
+        <div className="flex items-center gap-1 text-sm text-[#888] min-w-17.5 md:min-w-22.5 justify-center">
           <input
             type="number"
             min={1}
@@ -212,7 +236,7 @@ export default function NewspaperViewer() {
               const n = parseInt(e.target.value, 10);
               if (!isNaN(n)) goToPage(n);
             }}
-            className="w-10 bg-[#1a1a1a] border border-[#333] text-[#e5e5e5] text-center text-sm rounded px-1 py-0.5 disabled:opacity-40"
+            className="w-9 md:w-10 bg-[#1a1a1a] border border-[#333] text-[#e5e5e5] text-center text-sm rounded px-1 py-0.5 disabled:opacity-40"
           />
           <span>/ {numPages || "–"}</span>
         </div>
@@ -220,34 +244,38 @@ export default function NewspaperViewer() {
         <button
           onClick={() => goToPage(currentPage + 1)}
           disabled={currentPage >= numPages || numPages === 0}
-          className="px-3 py-1 text-sm rounded border border-transparent hover:bg-[#333] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          className="px-2 md:px-3 py-1 text-sm rounded border border-transparent hover:bg-[#333] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
-          {t("next")}
+          <span className="md:hidden">›</span>
+          <span className="hidden md:inline">{t("next")}</span>
         </button>
 
         <div className="flex-1" />
 
+        {/* Zoom controls */}
         <button
           onClick={() => applyZoom(scale / 1.2)}
           disabled={numPages === 0}
-          className="px-3 py-1 text-sm rounded border border-transparent hover:bg-[#333] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          className="px-2 md:px-3 py-1 text-sm rounded border border-transparent hover:bg-[#333] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
-          {t("zoomOut")}
+          <span className="md:hidden">−</span>
+          <span className="hidden md:inline">{t("zoomOut")}</span>
         </button>
-        <span className="text-sm text-[#888] min-w-[52px] text-center tabular-nums">
+        <span className="text-sm text-[#888] min-w-11 md:min-w-13 text-center tabular-nums">
           {numPages > 0 ? `${Math.round(scale * 100)}%` : "–"}
         </span>
         <button
           onClick={() => applyZoom(scale * 1.2)}
           disabled={numPages === 0}
-          className="px-3 py-1 text-sm rounded border border-transparent hover:bg-[#333] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          className="px-2 md:px-3 py-1 text-sm rounded border border-transparent hover:bg-[#333] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
-          {t("zoomIn")}
+          <span className="md:hidden">+</span>
+          <span className="hidden md:inline">{t("zoomIn")}</span>
         </button>
         <button
           onClick={fitWidth}
           disabled={numPages === 0}
-          className="px-3 py-1 text-sm rounded border border-transparent hover:bg-[#333] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          className="hidden md:block px-3 py-1 text-sm rounded border border-transparent hover:bg-[#333] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
           {t("fit")}
         </button>

@@ -48,7 +48,9 @@ export function Navbar() {
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [menuOpen]);
 
   function cycleLang() {
@@ -66,17 +68,35 @@ export function Navbar() {
   const EXPLORE_LINKS = [
     { labelKey: "exploreLinks.aboutUs" as const, href: "/about" },
     { labelKey: "exploreLinks.events" as const, href: "/events" },
-    { labelKey: "exploreLinks.newspaperCatalog" as const, href: "/newspaper-catalog" },
+    {
+      labelKey: "exploreLinks.newspaperCatalog" as const,
+      href: "/newspaper-catalog",
+    },
     { labelKey: "exploreLinks.home" as const, href: "/" },
   ];
 
   // FIXME: keep in sync with Footer.tsx HISTORY_LINKS — slug for Part 1 not yet confirmed
   const HISTORY_LINKS = [
-    { labelKey: "historyLinks.movementInSerbia" as const, href: "/history/serbian-national-movement-outside-of-serbia" },
-    { labelKey: "historyLinks.testimonies" as const, href: "/history/foreign-testimonies-about-chetniks-and-general-mihalovic" },
-    { labelKey: "historyLinks.movementOutsideSerbia" as const, href: "/history/serbian-national-movement-outside-of-serbia" },
-    { labelKey: "historyLinks.symbolsAndTraditions" as const, href: "/history/symbols-and-traditions" },
-    { labelKey: "historyLinks.celebrations" as const, href: "/history/celebrations-and-commemorations" },
+    {
+      labelKey: "historyLinks.movementInSerbia" as const,
+      href: "/history/serbian-national-movement-in-serbia",
+    },
+    {
+      labelKey: "historyLinks.testimonies" as const,
+      href: "/history/foreign-testimonies-about-chetniks-and-general-mihalovic",
+    },
+    {
+      labelKey: "historyLinks.movementOutsideSerbia" as const,
+      href: "/history/serbian-national-movement-outside-of-serbia",
+    },
+    {
+      labelKey: "historyLinks.symbolsAndTraditions" as const,
+      href: "/history/symbols-and-traditions",
+    },
+    {
+      labelKey: "historyLinks.celebrations" as const,
+      href: "/history/celebrations-and-commemorations",
+    },
   ];
 
   return (
@@ -84,16 +104,28 @@ export function Navbar() {
       <nav className="sticky top-0 z-50 bg-offwhite-1 border-b border-blue-2 w-full">
         <div className="max-w-[1512px] mx-auto px-4 md:px-6 xl:px-10 flex items-center justify-between pb-5 pt-1">
           <Link href="/" onClick={() => setMenuOpen(false)}>
-            <img src="/logo-black.svg" alt="Ravna Gora" className="h-17.5 md:h-21.5 xl:h-25.25 w-auto" />
+            <img
+              src="/logo-black.svg"
+              alt="Ravna Gora"
+              className="h-17.5 md:h-21.5 xl:h-25.25 w-auto"
+            />
           </Link>
 
           <div className="flex items-center">
             {/* Desktop: nav links + Login + language switcher in one row with vertical dividers */}
             <div className="hidden xl:flex items-center">
-              {[...NAV_LINKS, { labelKey: "login" as const, href: "/login" }].map(({ labelKey, href }, i) => (
+              {[
+                ...NAV_LINKS,
+                { labelKey: "login" as const, href: "/login" },
+              ].map(({ labelKey, href }, i) => (
                 <div key={labelKey} className="flex items-center">
-                  {i > 0 && <div className="w-px h-[18px] bg-black mx-[var(--space-3)]" />}
-                  <Link href={href} className="type-ui-medium font-bold text-black whitespace-nowrap hover:underline">
+                  {i > 0 && (
+                    <div className="w-px h-[18px] bg-black mx-[var(--space-3)]" />
+                  )}
+                  <Link
+                    href={href}
+                    className="type-ui-medium font-bold text-black whitespace-nowrap hover:underline"
+                  >
                     {t(labelKey)}
                   </Link>
                 </div>
@@ -115,10 +147,40 @@ export function Navbar() {
               className="xl:hidden p-1"
               aria-label={t("openMenu")}
             >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <line x1="3" y1="6"  x2="21" y2="6"  stroke="black" strokeWidth="2" strokeLinecap="round" />
-                <line x1="3" y1="12" x2="21" y2="12" stroke="black" strokeWidth="2" strokeLinecap="round" />
-                <line x1="3" y1="18" x2="21" y2="18" stroke="black" strokeWidth="2" strokeLinecap="round" />
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                aria-hidden="true"
+              >
+                <line
+                  x1="3"
+                  y1="6"
+                  x2="21"
+                  y2="6"
+                  stroke="black"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+                <line
+                  x1="3"
+                  y1="12"
+                  x2="21"
+                  y2="12"
+                  stroke="black"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+                <line
+                  x1="3"
+                  y1="18"
+                  x2="21"
+                  y2="18"
+                  stroke="black"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
               </svg>
             </button>
           </div>
@@ -132,16 +194,42 @@ export function Navbar() {
           <div className="bg-offwhite-1 border-b border-blue-2 shrink-0">
             <div className="max-w-[1512px] mx-auto px-4 md:px-6 flex items-center justify-between pb-5 pt-1">
               <Link href="/" onClick={() => setMenuOpen(false)}>
-                <img src="/logo-black.svg" alt="Ravna Gora" className="h-17.5 md:h-21.5 xl:h-25.25 w-auto" />
+                <img
+                  src="/logo-black.svg"
+                  alt="Ravna Gora"
+                  className="h-17.5 md:h-21.5 xl:h-25.25 w-auto"
+                />
               </Link>
               <button
                 onClick={() => setMenuOpen(false)}
                 className="p-1"
                 aria-label={t("closeMenu")}
               >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <line x1="18" y1="6"  x2="6"  y2="18" stroke="#042467" strokeWidth="2" strokeLinecap="round" />
-                  <line x1="6"  y1="6"  x2="18" y2="18" stroke="#042467" strokeWidth="2" strokeLinecap="round" />
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <line
+                    x1="18"
+                    y1="6"
+                    x2="6"
+                    y2="18"
+                    stroke="#042467"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                  <line
+                    x1="6"
+                    y1="6"
+                    x2="18"
+                    y2="18"
+                    stroke="#042467"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
                 </svg>
               </button>
             </div>
