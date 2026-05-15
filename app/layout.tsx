@@ -15,9 +15,32 @@ const inter = Inter({
   weight: ["400", "500", "600", "700"],
 });
 
+const SITE_URL = "https://ravnagorachetniks.org";
+const SITE_NAME = "Ravna Gora";
+const TITLE = "The Movement of Serbian Chetniks Ravne Gore";
+const DESCRIPTION =
+  "Official website of the Movement of Serbian Chetniks Ravne Gore — USA Chapter. Preserving the Ravna Gora ideals and the legacy of those who fought for the Serbian people.";
+
 export const metadata: Metadata = {
-  title: "Ravna Gora",
-  description: "ravnagorachetniks.org",
+  title: {
+    default: TITLE,
+    template: `%s — ${SITE_NAME}`,
+  },
+  description: DESCRIPTION,
+  metadataBase: new URL(SITE_URL),
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    title: TITLE,
+    description: DESCRIPTION,
+    url: SITE_URL,
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
+  },
 };
 
 export default async function RootLayout({
