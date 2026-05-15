@@ -118,7 +118,7 @@ export default async function Home({
 
             {/* ── Latest newspaper card ── */}
             <div className="flex justify-center">
-              <div className="flex flex-col gap-[var(--space-3)] w-full max-w-[464px]">
+              <Link href="/newspaper-catalog" className="group flex flex-col gap-(--space-3) w-full max-w-116">
                 <div className="relative h-[300px] md:h-[360px] xl:h-[420px] overflow-hidden">
                   <img
                     alt={t("latestIssueAlt")}
@@ -131,12 +131,12 @@ export default async function Home({
                 <div className="flex flex-col gap-[var(--space-3)]">
                   <div className="flex flex-col gap-[4px]">
                     <p className="type-large text-black">{latestIssue.date}</p>
-                    <h3 className="type-h3 text-black">{t("latestIssueHeading", { number: latestIssue.number })}</h3>
+                    <h3 className="type-h3 text-black group-hover:underline">{t("latestIssueHeading", { number: latestIssue.number })}</h3>
                   </div>
 
                   <p className="type-body text-black">{t("latestIssueDesc")}</p>
                 </div>
-              </div>
+              </Link>
             </div>
 
             {/* ── About ── */}
@@ -151,7 +151,7 @@ export default async function Home({
                   </div>
                 </div>
 
-                <p className="type-h4 text-black text-center">{t("loadMore")}</p>
+                <Link href="/about" className="type-h4 text-black text-center xl:text-left hover:underline">{t("loadMore")}</Link>
               </div>
 
               <div className="flex flex-col gap-[10px] w-full xl:w-[716px] p-[10px]">
@@ -177,7 +177,7 @@ export default async function Home({
 
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-[18px] gap-y-[var(--space-card-v)]">
                 {histArticles.map(({ part, title, img, href, excerpt }) => (
-                  <Link key={part} href={href}>
+                  <Link key={part} href={href} className="group">
                     <article className="flex flex-col gap-[var(--space-text-p)]">
                       <div className="relative h-[260px] md:h-[320px] xl:h-[421px] overflow-hidden">
                         <Image
@@ -192,7 +192,7 @@ export default async function Home({
                       <div className="flex flex-col gap-[var(--space-text-p)]">
                         <div className="flex flex-col gap-1">
                           <p className="type-large text-black">{part}</p>
-                          <h3 className="type-h3 text-black">{title}</h3>
+                          <h3 className="type-h3 text-black group-hover:underline">{title}</h3>
                         </div>
 
                         <p className="type-body text-black line-clamp-3">{excerpt}</p>
@@ -212,14 +212,16 @@ export default async function Home({
                   {chapters.map(({ name, websiteUrl }) => (
                     <div key={name} className="flex flex-col gap-[var(--space-4)]">
                       <div className="h-px bg-black/20 w-full" />
-                      <div className="flex items-center justify-between">
-                        <p className="type-h2 text-black">{name}</p>
-                        {websiteUrl && (
-                          <a href={websiteUrl} className="type-body text-black">
-                            {t("visit")}
-                          </a>
-                        )}
-                      </div>
+                      {websiteUrl ? (
+                        <a href={websiteUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between group">
+                          <p className="type-h2 text-black">{name}</p>
+                          <span className="type-body text-black group-hover:underline">{t("visit")} →</span>
+                        </a>
+                      ) : (
+                        <div className="flex items-center justify-between">
+                          <p className="type-h2 text-black">{name}</p>
+                        </div>
+                      )}
                     </div>
                   ))}
                   <div className="h-px bg-black/20 w-full" />
@@ -240,7 +242,7 @@ export default async function Home({
                 </div>
 
                 <a
-                  href="#"
+                  href="/membership"
                   className="bg-blue-2 text-white type-h4 text-center w-full xl:w-[464px] py-[26px] px-5 flex items-center justify-center shrink-0"
                 >
                   {t("joinCTA")}

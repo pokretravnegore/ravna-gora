@@ -60,7 +60,7 @@ export function Navbar() {
     { labelKey: "aboutUs" as const, href: "/about" },
     { labelKey: "events" as const, href: "/events" },
     { labelKey: "newspaper" as const, href: "/newspaper-catalog" },
-    { labelKey: "membership" as const, href: "#" },
+    { labelKey: "membership" as const, href: "/membership" },
   ];
 
   const EXPLORE_LINKS = [
@@ -90,10 +90,10 @@ export function Navbar() {
           <div className="flex items-center">
             {/* Desktop: nav links + Login + language switcher in one row with vertical dividers */}
             <div className="hidden xl:flex items-center">
-              {[...NAV_LINKS, { labelKey: "login" as const, href: "#" }].map(({ labelKey, href }, i) => (
+              {[...NAV_LINKS, { labelKey: "login" as const, href: "/login" }].map(({ labelKey, href }, i) => (
                 <div key={labelKey} className="flex items-center">
                   {i > 0 && <div className="w-px h-[18px] bg-black mx-[var(--space-3)]" />}
-                  <Link href={href} className="type-ui-medium font-bold text-black whitespace-nowrap">
+                  <Link href={href} className="type-ui-medium font-bold text-black whitespace-nowrap hover:underline">
                     {t(labelKey)}
                   </Link>
                 </div>
@@ -140,8 +140,8 @@ export function Navbar() {
                 aria-label={t("closeMenu")}
               >
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <line x1="18" y1="6"  x2="6"  y2="18" stroke="#153c8c" strokeWidth="2" strokeLinecap="round" />
-                  <line x1="6"  y1="6"  x2="18" y2="18" stroke="#153c8c" strokeWidth="2" strokeLinecap="round" />
+                  <line x1="18" y1="6"  x2="6"  y2="18" stroke="#042467" strokeWidth="2" strokeLinecap="round" />
+                  <line x1="6"  y1="6"  x2="18" y2="18" stroke="#042467" strokeWidth="2" strokeLinecap="round" />
                 </svg>
               </button>
             </div>
@@ -159,7 +159,7 @@ export function Navbar() {
                       key={labelKey}
                       href={href}
                       onClick={() => setMenuOpen(false)}
-                      className="type-small-medium text-gray-1"
+                      className="type-small-medium text-gray-1 hover:underline"
                     >
                       {t(labelKey)}
                     </Link>
@@ -178,7 +178,7 @@ export function Navbar() {
                       key={labelKey}
                       href={href}
                       onClick={() => setMenuOpen(false)}
-                      className="type-small-medium text-gray-1 whitespace-nowrap"
+                      className="type-small-medium text-gray-1 whitespace-nowrap hover:underline"
                     >
                       {t(labelKey)}
                     </Link>
@@ -190,9 +190,9 @@ export function Navbar() {
 
               {/* Login */}
               <Link
-                href="#"
+                href="/login"
                 onClick={() => setMenuOpen(false)}
-                className="type-h4 text-gray-1"
+                className="type-h4 text-gray-1 hover:underline"
               >
                 {t("login")}
               </Link>
