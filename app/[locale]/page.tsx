@@ -151,7 +151,7 @@ export default async function Home({
                   </div>
                 </div>
 
-                <Link href="/about" className="type-h4 text-black text-center hover:underline">{t("loadMore")}</Link>
+                <Link href="/about" className="type-h4 text-black text-center xl:text-left hover:underline">{t("loadMore")}</Link>
               </div>
 
               <div className="flex flex-col gap-[10px] w-full xl:w-[716px] p-[10px]">
@@ -212,14 +212,16 @@ export default async function Home({
                   {chapters.map(({ name, websiteUrl }) => (
                     <div key={name} className="flex flex-col gap-[var(--space-4)]">
                       <div className="h-px bg-black/20 w-full" />
-                      <div className="flex items-center justify-between">
-                        <p className="type-h2 text-black">{name}</p>
-                        {websiteUrl && (
-                          <a href={websiteUrl} className="type-body text-black">
-                            {t("visit")}
-                          </a>
-                        )}
-                      </div>
+                      {websiteUrl ? (
+                        <a href={websiteUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between group">
+                          <p className="type-h2 text-black">{name}</p>
+                          <span className="type-body text-black group-hover:underline">{t("visit")} →</span>
+                        </a>
+                      ) : (
+                        <div className="flex items-center justify-between">
+                          <p className="type-h2 text-black">{name}</p>
+                        </div>
+                      )}
                     </div>
                   ))}
                   <div className="h-px bg-black/20 w-full" />
