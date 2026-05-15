@@ -40,7 +40,7 @@ export async function Footer() {
               <p className="type-h4 text-white">{t("explore")}</p>
               <div className="flex flex-col gap-[var(--space-2)]">
                 {EXPLORE_LINKS.map(({ label, href }) => (
-                  <Link key={label} href={href} className="type-body text-white">
+                  <Link key={label} href={href} className="type-body text-white hover:underline">
                     {label}
                   </Link>
                 ))}
@@ -51,7 +51,7 @@ export async function Footer() {
               <p className="type-h4 text-white">{t("history")}</p>
               <div className="flex flex-col gap-[var(--space-2)]">
                 {HISTORY_LINKS.map(({ label, href }) => (
-                  <Link key={label} href={href} className="type-body text-white whitespace-nowrap">
+                  <Link key={label} href={href} className="type-body text-white whitespace-nowrap hover:underline">
                     {label}
                   </Link>
                 ))}
@@ -66,7 +66,7 @@ export async function Footer() {
                 <rect x="2" y="4" width="20" height="16" rx="2" />
                 <polyline points="2,4 12,13 22,4" />
               </svg>
-              <p className="type-body text-white">contact@ravnagorachetniks.org</p>
+              <a href="mailto:contact@ravnagorachetniks.org" className="type-body text-white hover:underline">contact@ravnagorachetniks.org</a>
             </div>
           </div>
         </div>

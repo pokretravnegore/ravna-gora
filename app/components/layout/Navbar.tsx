@@ -140,8 +140,8 @@ export function Navbar() {
                 aria-label={t("closeMenu")}
               >
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <line x1="18" y1="6"  x2="6"  y2="18" stroke="#153c8c" strokeWidth="2" strokeLinecap="round" />
-                  <line x1="6"  y1="6"  x2="18" y2="18" stroke="#153c8c" strokeWidth="2" strokeLinecap="round" />
+                  <line x1="18" y1="6"  x2="6"  y2="18" stroke="#042467" strokeWidth="2" strokeLinecap="round" />
+                  <line x1="6"  y1="6"  x2="18" y2="18" stroke="#042467" strokeWidth="2" strokeLinecap="round" />
                 </svg>
               </button>
             </div>
@@ -159,7 +159,7 @@ export function Navbar() {
                       key={labelKey}
                       href={href}
                       onClick={() => setMenuOpen(false)}
-                      className="type-small-medium text-gray-1"
+                      className="type-small-medium text-gray-1 hover:underline"
                     >
                       {t(labelKey)}
                     </Link>
@@ -178,7 +178,7 @@ export function Navbar() {
                       key={labelKey}
                       href={href}
                       onClick={() => setMenuOpen(false)}
-                      className="type-small-medium text-gray-1 whitespace-nowrap"
+                      className="type-small-medium text-gray-1 whitespace-nowrap hover:underline"
                     >
                       {t(labelKey)}
                     </Link>
@@ -190,9 +190,9 @@ export function Navbar() {
 
               {/* Login */}
               <Link
-                href="#"
+                href="/login"
                 onClick={() => setMenuOpen(false)}
-                className="type-h4 text-gray-1"
+                className="type-h4 text-gray-1 hover:underline"
               >
                 {t("login")}
               </Link>

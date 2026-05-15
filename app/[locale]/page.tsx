@@ -242,7 +242,7 @@ export default async function Home({
                 </div>
 
                 <a
-                  href="#"
+                  href="/membership"
                   className="bg-blue-2 text-white type-h4 text-center w-full xl:w-[464px] py-[26px] px-5 flex items-center justify-center shrink-0"
                 >
                   {t("joinCTA")}
