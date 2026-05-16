@@ -15,7 +15,12 @@ const inter = Inter({
   weight: ["400", "500", "600", "700"],
 });
 
-const SITE_URL = "https://ravnagorachetniks.org";
+const CANONICAL_URL = "https://ravnagorachetniks.org";
+// On Vercel, VERCEL_URL is the deployment hostname (no protocol). Use it so that
+// relative image paths resolve to a publicly reachable URL on every deployment.
+const SITE_URL = process.env.VERCEL_URL
+  ? `https://${process.env.VERCEL_URL}`
+  : CANONICAL_URL;
 const SITE_NAME = "Ravna Gora";
 const TITLE = "The Movement of Serbian Chetniks Ravne Gore";
 const DESCRIPTION =
@@ -33,13 +38,15 @@ export const metadata: Metadata = {
     siteName: SITE_NAME,
     title: TITLE,
     description: DESCRIPTION,
-    url: SITE_URL,
+    url: CANONICAL_URL,
     locale: "en_US",
+    images: [{ url: "/opengraph.png", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
     title: TITLE,
     description: DESCRIPTION,
+    images: ["/twitter.png"],
   },
 };
 
