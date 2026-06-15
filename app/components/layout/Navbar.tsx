@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useLocale } from "next-intl";
 import { Link, useRouter, usePathname } from "../../../i18n/navigation";
+import { useAuth } from "../providers/AuthProvider";
 
 type Locale = "en" | "sr-cyrl" | "sr-latn";
 
@@ -45,6 +46,7 @@ export function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const { user } = useAuth();
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
@@ -116,7 +118,10 @@ export function Navbar() {
             <div className="hidden xl:flex items-center">
               {[
                 ...NAV_LINKS,
-                { labelKey: "login" as const, href: "/login" },
+                {
+                  labelKey: (user ? "account" : "login") as "account" | "login",
+                  href: user ? "/account" : "/login",
+                },
               ].map(({ labelKey, href }, i) => (
                 <div key={labelKey} className="flex items-center">
                   {i > 0 && (
@@ -276,13 +281,13 @@ export function Navbar() {
 
               <div className="h-px bg-black/15 w-full" />
 
-              {/* Login */}
+              {/* Login / Account */}
               <Link
-                href="/login"
+                href={user ? "/account" : "/login"}
                 onClick={() => setMenuOpen(false)}
                 className="type-h4 text-gray-1 hover:underline"
               >
-                {t("login")}
+                {user ? t("account") : t("login")}
               </Link>
 
               <div className="h-px bg-black/15 w-full" />
