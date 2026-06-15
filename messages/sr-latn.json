@@ -258,6 +258,8 @@
     "loading": "Učitavanje…",
     "failedToLoad": "Nije uspelo učitavanje PDF-a.",
     "zoomOut": "−",
-    "zoomIn": "+"
+    "zoomIn": "+",
+    "loginRequired": "Morate biti prijavljeni da biste čitali ovo izdanje.",
+    "loginLink": "Prijavite se"
   }
 }

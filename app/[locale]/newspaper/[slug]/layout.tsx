@@ -1,22 +1,14 @@
 import type { Metadata } from "next";
-import { client } from "../../../../sanity/lib/client";
-import { urlFor, type SanityImage } from "../../../../sanity/lib/image";
+import { supabase } from "../../../../lib/supabase";
+import type { Issue } from "../../../../lib/types";
 
-type IssueMetadata = {
-  issueNumber: number;
-  issueDate: string;
-  image: SanityImage;
-};
-
-async function getIssueMetadata(slug: string): Promise<IssueMetadata | null> {
-  return client.fetch(
-    `*[_type == "newspaperIssue" && slug.current == $slug][0] {
-      issueNumber,
-      issueDate,
-      image
-    }`,
-    { slug }
-  );
+async function getIssueMetadata(slug: string): Promise<Issue | null> {
+  const { data } = await supabase
+    .from("issues")
+    .select("issue_number, issue_date, cover_image_url, title, id, slug, pdf_object_key, published, created_at, updated_at")
+    .eq("slug", slug)
+    .single();
+  return (data as Issue) ?? null;
 }
 
 export async function generateMetadata({
@@ -28,19 +20,18 @@ export async function generateMetadata({
   const issue = await getIssueMetadata(slug);
   if (!issue) return {};
 
-  const title = `Issue #${issue.issueNumber}`;
-  const imageUrl = urlFor(issue.image).width(1200).height(630).fit("crop").auto("format").url();
+  const title = issue.title ?? `Issue #${issue.issue_number}`;
+  const images = issue.cover_image_url
+    ? [{ url: issue.cover_image_url, width: 1200, height: 630 }]
+    : [];
 
   return {
     title,
-    openGraph: {
-      title,
-      images: [{ url: imageUrl, width: 1200, height: 630 }],
-    },
+    openGraph: { title, images },
     twitter: {
       card: "summary_large_image",
       title,
-      images: [imageUrl],
+      images: images.map((i) => i.url),
     },
   };
 }
