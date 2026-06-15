@@ -258,6 +258,8 @@
     "loading": "Loading…",
     "failedToLoad": "Failed to load PDF.",
     "zoomOut": "−",
-    "zoomIn": "+"
+    "zoomIn": "+",
+    "loginRequired": "You must be logged in to read this issue.",
+    "loginLink": "Log in"
   }
 }

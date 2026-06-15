@@ -3,8 +3,6 @@ import { Navbar } from "../../components/layout/Navbar";
 import { Footer } from "../../components/layout/Footer";
 import { CatalogHeader } from "../../components/ui/CatalogHeader";
 import { NewspaperDecadeFilter } from "../../components/ui/NewspaperDecadeFilter";
-import { client } from "../../../sanity/lib/client";
-import { urlFor, type SanityImage } from "../../../sanity/lib/image";
 import type { NewsIssue } from "../../components/ui/NewspaperDecadeFilter";
 
 const A = {
@@ -13,23 +11,30 @@ const A = {
 
 export const revalidate = 60;
 
-type RawIssue = { number: number; date: string; image: SanityImage; slug: string };
+const WORKER_URL = process.env.NEXT_PUBLIC_WORKER_URL ?? "http://localhost:8787";
+
+type WorkerIssue = {
+  slug: string;
+  issue_number: number;
+  issue_date: string;
+  cover_image_url: string | null;
+  title: string | null;
+};
 
 async function getIssues(): Promise<NewsIssue[]> {
-  const raw: RawIssue[] = await client.fetch(
-    `*[_type == "newspaperIssue"] | order(issueDate desc) {
-      "number": issueNumber,
-      "date": issueDate,
-      image,
-      "slug": slug.current
-    }`
-  );
-  return raw.map((r) => ({
-    number: r.number,
-    date: r.date,
-    imageUrl: urlFor(r.image).width(700).auto("format").url(),
-    slug: r.slug,
-  }));
+  try {
+    const res = await fetch(`${WORKER_URL}/issues`, { next: { revalidate: 60 } });
+    if (!res.ok) return [];
+    const { issues } = (await res.json()) as { issues: WorkerIssue[] };
+    return issues.map((i) => ({
+      number: i.issue_number,
+      date: i.issue_date,
+      imageUrl: i.cover_image_url ?? "",
+      slug: i.slug,
+    }));
+  } catch {
+    return [];
+  }
 }
 
 export default async function NewspaperCatalog() {
