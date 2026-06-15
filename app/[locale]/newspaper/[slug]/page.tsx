@@ -4,13 +4,16 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Link } from "../../../../i18n/navigation";
+import { useAuth } from "../../../components/providers/AuthProvider";
 import type { PDFDocumentProxy } from "pdfjs-dist";
 
+const WORKER_URL = process.env.NEXT_PUBLIC_WORKER_URL ?? "http://localhost:8787";
 const MIN_SCALE = 0.25;
 const MAX_SCALE = 5;
 
 export default function NewspaperViewer() {
   const { slug } = useParams<{ slug: string }>();
+  const { session, loading: authLoading } = useAuth();
   const t = useTranslations("newspaper");
 
   const [numPages, setNumPages] = useState(0);
@@ -62,6 +65,7 @@ export default function NewspaperViewer() {
   );
 
   const loadPdf = useCallback(async () => {
+    if (!session) return;
     cancelledRef.current = false;
     setLoading(true);
     setError(false);
@@ -70,11 +74,13 @@ export default function NewspaperViewer() {
 
     try {
       const pdfjsLib = await import("pdfjs-dist");
-      // CDN worker avoids MIME-type issues with the local .mjs file in Next.js dev
       pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
       const pdf = await pdfjsLib
-        .getDocument(`/api/newspaper/${slug}`)
+        .getDocument({
+          url: `${WORKER_URL}/issues/${slug}/pdf`,
+          httpHeaders: { Authorization: `Bearer ${session.access_token}` },
+        })
         .promise;
 
       if (cancelledRef.current) return;
@@ -83,7 +89,6 @@ export default function NewspaperViewer() {
       setNumPages(pdf.numPages);
       setCurrentPage(1);
 
-      // Calculate fit-width scale before rendering so pages aren't drawn twice
       const container = containerRef.current;
       if (container) {
         const firstPage = await pdf.getPage(1);
@@ -106,7 +111,7 @@ export default function NewspaperViewer() {
         setLoading(false);
       }
     }
-  }, [slug, renderPage]);
+  }, [slug, renderPage, session]);
 
   const rerenderAtScale = useCallback(async (s: number) => {
     const pdf = pdfRef.current;
@@ -121,9 +126,10 @@ export default function NewspaperViewer() {
   }, [renderPage, currentPage]);
 
   useEffect(() => {
+    if (authLoading || !session) return;
     loadPdf();
     return () => { cancelledRef.current = true; };
-  }, [loadPdf]);
+  }, [loadPdf, authLoading, session]);
 
   // Detect current page from scroll
   useEffect(() => {
@@ -198,6 +204,25 @@ export default function NewspaperViewer() {
   const blockContextMenu = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
   }, []);
+
+  if (authLoading) {
+    return (
+      <div className="flex h-screen w-screen bg-[#1a1a1a] items-center justify-center">
+        <p className="text-[#888] text-sm">{t("loading")}</p>
+      </div>
+    );
+  }
+
+  if (!session) {
+    return (
+      <div className="flex h-screen w-screen bg-[#1a1a1a] flex-col items-center justify-center gap-4">
+        <p className="text-[#e5e5e5] text-sm">{t("loginRequired")}</p>
+        <Link href="/login" className="text-sm text-[#6b9fff] hover:underline">
+          {t("loginLink")}
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-screen w-screen bg-[#1a1a1a] text-[#e5e5e5] overflow-hidden">
